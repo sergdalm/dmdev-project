@@ -1,27 +1,18 @@
 package com.sergdalm.entity;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 
-import javax.persistence.Embedded;
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 
 @Data
+@ToString(callSuper = true)
 @AllArgsConstructor
-@NoArgsConstructor
-@Builder
+@SuperBuilder
 @Entity
-public class Administrator {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
-
-    @Embedded
-    private UserInformation userInformation;
+@DiscriminatorValue("administrator")
+public class Administrator extends User {
 }

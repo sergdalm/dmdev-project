@@ -4,24 +4,26 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 
-import javax.persistence.Embedded;
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
+@SuperBuilder
 @Entity
-public class Client {
+@DiscriminatorValue("client")
+@ToString(exclude = "appointments", callSuper = true)
+public class Client extends User {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
-
-    @Embedded
-    private UserInformation userInformation;
+    @Builder.Default
+    @OneToMany(mappedBy = "client")
+    private List<Appointment> appointments = new ArrayList<>();
 }

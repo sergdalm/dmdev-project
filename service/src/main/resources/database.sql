@@ -1,40 +1,94 @@
-CREATE TABLE specialist
+CREATE TABLE users
 (
-    id SERIAL PRIMARY KEY ,
-    email VARCHAR(126) UNIQUE NOT NULL ,
-    first_name VARCHAR(126) NOT NULL,
-    last_name VARCHAR(126) NOT NULL,
-    gender VARCHAR(32) NOT NULL,
-    birthday TIMESTAMP NOT NULL
+    id                  SERIAL PRIMARY KEY,
+    email               VARCHAR(128) UNIQUE NOT NULL,
+    password            VARCHAR(128)        NOT NULL,
+    role                VARCHAR(32)         NOT NULL,
+    first_name          VARCHAR(128)        NOT NULL,
+    last_name           VARCHAR(128)        NOT NULL,
+    gender              VARCHAR(32)         NOT NULL,
+    birthday            DATE                NOT NULL,
+    mobile_phone_number VARCHAR(64) UNIQUE,
+    description         JSONB
 );
 
-CREATE TABLE client
+CREATE TABLE service
 (
-    id SERIAL PRIMARY KEY ,
-    email VARCHAR(126) UNIQUE NOT NULL ,
-    first_name VARCHAR(126) NOT NULL,
-    last_name VARCHAR(126) NOT NULL,
-    gender VARCHAR(32) NOT NULL,
-    birthday TIMESTAMP NOT NULL
+    id          SERIAL PRIMARY KEY,
+    name        VARCHAR(128) UNIQUE NOT NULL,
+    description VARCHAR(256)        NOT NULL
 );
 
-CREATE TABLE administrator
+CREATE TABLE specialist_service
 (
-    id SERIAL PRIMARY KEY ,
-    email VARCHAR(126) UNIQUE NOT NULL ,
-    first_name VARCHAR(126) NOT NULL,
-    last_name VARCHAR(126) NOT NULL,
-    gender VARCHAR(32) NOT NULL,
-    birthday TIMESTAMP NOT NULL
+    id            SERIAL PRIMARY KEY,
+    specialist_id INT REFERENCES users (id) ON DELETE CASCADE   NOT NULL,
+    service_id    INT REFERENCES service (id) ON DELETE CASCADE NOT NULL,
+    length_min    INT                                           NOT NULL,
+    price         INT                                           NOT NULL,
+    UNIQUE (specialist_id, service_id, length_min)
+);
+
+
+CREATE TABLE address
+(
+    id          SERIAL PRIMARY KEY,
+    address     VARCHAR(128) UNIQUE NOT NULL,
+    description VARCHAR(256)        NOT NULL
+);
+
+
+CREATE TABLE specialist_available_time
+(
+    specialist_id INT REFERENCES users (id) ON DELETE CASCADE   NOT NULL,
+    address_id    INT REFERENCES address (id) ON DELETE CASCADE NOT NULL,
+    date          DATE                                          NOT NULL,
+    time          TIME                                          NOT NULL,
+    UNIQUE (specialist_id, address_id, date, time)
 );
 
 CREATE TABLE appointment
 (
-    id SERIAL PRIMARY KEY ,
-    client_id INT REFERENCES client(id),
-    specialist_id INT REFERENCES specialist(id),
-    date DATE NOT NULL ,
-    start_time TIME NOT NULL ,
-    length_min INT NOT NULL ,
-    massage_type VARCHAR(32) NOT NULL
+    id            SERIAL PRIMARY KEY,
+    client_id     INT REFERENCES users (id) ON DELETE CASCADE   NOT NULL,
+    specialist_id INT REFERENCES users (id) ON DELETE CASCADE   NOT NULL,
+    address_id    INT REFERENCES address (id) ON DELETE CASCADE NOT NULL,
+    service_id    INT REFERENCES service (id) ON DELETE CASCADE NOT NULL,
+    date          DATE                                          NOT NULL,
+    start_time    TIME                                          NOT NULL,
+    length_min    INT                                           NOT NULL,
+    UNIQUE (specialist_id, date, start_time)
+);
+
+CREATE TABLE review
+(
+    specialist_id INT REFERENCES users (id) ON DELETE CASCADE NOT NULL,
+    client_id     INT REFERENCES users (id) ON DELETE CASCADE NOT NULL,
+    published_at  TIMESTAMP                                   NOT NULL,
+    content       VARCHAR(256)                                NOT NULL
+);
+
+CREATE TABLE account
+(
+    id                SERIAL PRIMARY KEY,
+    user_id           INT REFERENCES users (id) ON DELETE CASCADE UNIQUE NOT NULL,
+    current_amount    INT                                                NOT NULL,
+    bank_account_info JSONB
+);
+
+CREATE TABLE transaction
+(
+    from_account_id INT REFERENCES account (id) ON DELETE NO ACTION NOT NULL,
+    to_account_id   INT REFERENCES account (id) ON DELETE NO ACTION NOT NULL,
+    transfer_amount INT                                             NOT NULL,
+    transferred_at  TIMESTAMP                                       NOT NULL
+);
+
+CREATE TABLE service_sale
+(
+    specialist_service_id INT REFERENCES specialist_service (id) ON DELETE CASCADE NOT NULL,
+    address_id            INT REFERENCES address (id) ON DELETE CASCADE            NOT NULL,
+    start_day             DATE                                                     NOT NULL,
+    duration_days         INT                                                      NOT NULL,
+    sale_price            INT                                                      NOT NULL
 );

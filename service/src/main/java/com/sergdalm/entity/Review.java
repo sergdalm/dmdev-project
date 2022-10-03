@@ -12,53 +12,38 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import java.time.LocalDate;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 
 @Data
-@ToString(exclude = {"client", "specialist", "address", "service"})
+@ToString(exclude = {"specialist", "client"})
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Entity
-public class Appointment {
+public class Review {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @ManyToOne(optional = false)
-    private Client client;
-
-    @ManyToOne(optional = false)
     private Specialist specialist;
 
     @ManyToOne(optional = false)
-    private Address address;
-
-    @ManyToOne(optional = false)
-    private Service service;
+    private Client client;
 
     @Column(nullable = false)
-    private LocalDate date;
+    private LocalDateTime publishedAt;
 
     @Column(nullable = false)
-    private LocalTime startTime;
-
-    @Column(nullable = false)
-    private Integer lengthMin;
-
-    public void setClient(Client client) {
-        this.client = client;
-        client.getAppointments().add(this);
-    }
+    private String content;
 
     public void setSpecialist(Specialist specialist) {
         this.specialist = specialist;
-        specialist.getAppointments().add(this);
+        specialist.getReviews().add(this);
     }
 
-    public void setAddress(Address address) {
-        this.address = address;
+    public void setClient(Client client) {
+        this.client = client;
     }
 }

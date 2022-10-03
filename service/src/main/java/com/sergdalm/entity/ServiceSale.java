@@ -12,50 +12,38 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import java.time.LocalDate;
-import java.time.LocalTime;
 
 @Data
-@ToString(exclude = {"client", "specialist", "address", "service"})
+@ToString(exclude = {"address", "specialistService"})
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Entity
-public class Appointment {
+public class ServiceSale {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne(optional = false)
-    private Client client;
-
-    @ManyToOne(optional = false)
-    private Specialist specialist;
+    @OneToOne(optional = false)
+    private SpecialistService specialistService;
 
     @ManyToOne(optional = false)
     private Address address;
 
-    @ManyToOne(optional = false)
-    private Service service;
+    @Column(nullable = false)
+    private LocalDate startDate;
 
     @Column(nullable = false)
-    private LocalDate date;
+    private Integer durationDays;
 
     @Column(nullable = false)
-    private LocalTime startTime;
+    private Integer salePrice;
 
-    @Column(nullable = false)
-    private Integer lengthMin;
-
-    public void setClient(Client client) {
-        this.client = client;
-        client.getAppointments().add(this);
-    }
-
-    public void setSpecialist(Specialist specialist) {
-        this.specialist = specialist;
-        specialist.getAppointments().add(this);
+    public void setSpecialistService(SpecialistService specialistService) {
+        this.specialistService = specialistService;
     }
 
     public void setAddress(Address address) {
