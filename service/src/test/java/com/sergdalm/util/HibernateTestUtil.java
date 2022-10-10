@@ -2,7 +2,6 @@ package com.sergdalm.util;
 
 import lombok.experimental.UtilityClass;
 import org.hibernate.SessionFactory;
-import org.hibernate.cfg.Configuration;
 import org.testcontainers.containers.PostgreSQLContainer;
 
 @UtilityClass
@@ -15,12 +14,10 @@ public class HibernateTestUtil {
     }
 
     public static SessionFactory buildSessionFactory() {
-        Configuration configuration = HibernateUtil.buildConfiguration();
-        String jdbcUrl = postgres.getJdbcUrl();
-        configuration.setProperty("hibernate.connection.url", postgres.getJdbcUrl());
-        configuration.setProperty("hibernate.connection.username", postgres.getUsername());
-        configuration.setProperty("hibernate.connection.password", postgres.getPassword());
-
-        return configuration.buildSessionFactory();
+        return HibernateUtil.buildConfiguration()
+                .setProperty("hibernate.connection.url", postgres.getJdbcUrl())
+                .setProperty("hibernate.connection.username", postgres.getUsername())
+                .setProperty("hibernate.connection.password", postgres.getPassword())
+                .buildSessionFactory();
     }
 }

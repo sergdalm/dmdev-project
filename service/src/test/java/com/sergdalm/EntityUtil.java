@@ -1,21 +1,17 @@
 package com.sergdalm;
 
-
-import com.sergdalm.entity.Account;
 import com.sergdalm.entity.Address;
-import com.sergdalm.entity.Administrator;
 import com.sergdalm.entity.Appointment;
-import com.sergdalm.entity.Client;
+import com.sergdalm.entity.AppointmentStatus;
 import com.sergdalm.entity.Gender;
-import com.sergdalm.entity.MobilePhoneNumber;
 import com.sergdalm.entity.Review;
+import com.sergdalm.entity.Role;
 import com.sergdalm.entity.Service;
 import com.sergdalm.entity.ServiceName;
 import com.sergdalm.entity.ServiceSale;
-import com.sergdalm.entity.Specialist;
 import com.sergdalm.entity.SpecialistAvailableTime;
 import com.sergdalm.entity.SpecialistService;
-import com.sergdalm.entity.Transaction;
+import com.sergdalm.entity.User;
 import lombok.experimental.UtilityClass;
 
 import java.time.LocalDate;
@@ -25,42 +21,45 @@ import java.time.LocalTime;
 @UtilityClass
 public class EntityUtil {
 
-    public static Administrator getAdministrator() {
-        return Administrator.builder()
+    public static User getUserAdministrator() {
+        return User.builder()
                 .email("admin@mail.com")
                 .password("1djh2l")
                 .firstName("Alex")
                 .lastName("S")
                 .gender(Gender.FEMALE)
+                .role(Role.ADMINISTRATOR)
                 .birthday(LocalDate.of(1993, 7, 12))
-                .mobilePhone(new MobilePhoneNumber("911", "123", "45", "67"))
+                .mobilePhoneNumber("+7(911)123-45-67")
                 .gender(Gender.FEMALE)
                 .build();
     }
 
-    public static Client getClient() {
-        return Client.builder()
+    public static User getUserClient() {
+        return User.builder()
                 .email("client@mail.com")
+                .role(Role.CLIENT)
                 .password("dn38d")
                 .firstName("Svetlana")
                 .lastName("Petrova")
                 .gender(Gender.FEMALE)
                 .birthday(LocalDate.of(1985, 3, 1))
-                .mobilePhone(new MobilePhoneNumber("911", "242", "88", "44"))
+                .mobilePhoneNumber("+7(911)545-78-22")
                 .birthday(LocalDate.of(1993, 7, 12))
                 .gender(Gender.FEMALE)
                 .build();
     }
 
-    public static Specialist getSpecialist() {
-        return Specialist.builder()
+    public static User getUserSpecialist() {
+        return User.builder()
                 .email("dmitry@mail.com")
                 .password("39239")
+                .role(Role.SPECIALIST)
                 .firstName("Dmitry")
                 .lastName("Cheremuhin")
                 .gender(Gender.FEMALE)
                 .birthday(LocalDate.of(1977, 5, 25))
-                .mobilePhone(new MobilePhoneNumber("911", "039", "40", "20"))
+                .mobilePhoneNumber("+7(911)222-34-55")
                 .gender(Gender.FEMALE)
                 .description("""
                         {
@@ -76,6 +75,8 @@ public class EntityUtil {
                 .date(LocalDate.now())
                 .startTime(LocalTime.of(12, 0))
                 .lengthMin(90)
+                .price(2000)
+                .status(AppointmentStatus.CREATED_NOT_CONFIRMED)
                 .build();
     }
 
@@ -83,18 +84,6 @@ public class EntityUtil {
         return Address.builder()
                 .address("Nevsky pr. 16, 5")
                 .description("Nearby subway Gostinny drov")
-                .build();
-    }
-
-    public static Account getAccountWithZeroAmount() {
-        return Account.builder()
-                .currentAmount(0)
-                .bankAccountInfo("""
-                        {
-                        "cartNumber": "000000000",
-                        "bank": "Tinkoff"
-                        }
-                        """)
                 .build();
     }
 
@@ -131,13 +120,6 @@ public class EntityUtil {
         return SpecialistService.builder()
                 .lengthMin(90)
                 .price(2000)
-                .build();
-    }
-
-    public static Transaction getTransaction() {
-        return Transaction.builder()
-                .transferAmount(3000)
-                .transferredAt(LocalDateTime.now())
                 .build();
     }
 }

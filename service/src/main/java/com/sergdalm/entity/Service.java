@@ -7,6 +7,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -39,6 +40,10 @@ public class Service {
     private String description;
 
     @Builder.Default
-    @OneToMany(mappedBy = "service")
+    @OneToMany(mappedBy = "service", cascade = CascadeType.ALL)
     private List<SpecialistService> specialistServices = new ArrayList<>();
+
+    @Builder.Default
+    @OneToMany(mappedBy = "service", cascade = CascadeType.ALL)
+    private List<Appointment> appointments = new ArrayList<>();
 }

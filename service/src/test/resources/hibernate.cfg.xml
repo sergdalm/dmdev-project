@@ -11,10 +11,6 @@
         <property name="hibernate.hbm2ddl.auto">create</property>
 
         <mapping class="com.sergdalm.entity.User"/>
-        <mapping class="com.sergdalm.entity.Specialist"/>
-        <mapping class="com.sergdalm.entity.Client"/>
-        <mapping class="com.sergdalm.entity.Administrator"/>
-        <mapping class="com.sergdalm.entity.Account"/>
         <mapping class="com.sergdalm.entity.Address"/>
         <mapping class="com.sergdalm.entity.Appointment"/>
         <mapping class="com.sergdalm.entity.Review"/>
@@ -22,6 +18,5 @@
         <mapping class="com.sergdalm.entity.ServiceSale"/>
         <mapping class="com.sergdalm.entity.SpecialistAvailableTime"/>
         <mapping class="com.sergdalm.entity.SpecialistService"/>
-        <mapping class="com.sergdalm.entity.Transaction"/>
     </session-factory>
 </hibernate-configuration>

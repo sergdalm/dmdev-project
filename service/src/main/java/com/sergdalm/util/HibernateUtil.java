@@ -1,6 +1,5 @@
 package com.sergdalm.util;
 
-import com.sergdalm.convertor.MobilePhoneNumberConvertor;
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import lombok.experimental.UtilityClass;
 import org.hibernate.SessionFactory;
@@ -17,10 +16,9 @@ public class HibernateUtil {
 
     public static Configuration buildConfiguration() {
         Configuration configuration = new Configuration();
-        configuration.configure();
-        configuration.addAttributeConverter(new MobilePhoneNumberConvertor(), true);
-        configuration.setPhysicalNamingStrategy(new CamelCaseToUnderscoresNamingStrategy());
-        configuration.registerTypeOverride(new JsonBinaryType());
+        configuration.configure()
+                .registerTypeOverride(new JsonBinaryType())
+                .setPhysicalNamingStrategy(new CamelCaseToUnderscoresNamingStrategy());
         return configuration;
     }
 }

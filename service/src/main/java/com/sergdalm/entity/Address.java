@@ -7,6 +7,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -17,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
-@ToString(exclude = "appointments")
+@ToString(exclude = {"appointments", "serviceSales", "specialistAvailableTimes"})
 @EqualsAndHashCode(of = "address")
 @AllArgsConstructor
 @NoArgsConstructor
@@ -36,6 +37,14 @@ public class Address {
     private String description;
 
     @Builder.Default
-    @OneToMany(mappedBy = "address")
+    @OneToMany(mappedBy = "address", cascade = CascadeType.ALL)
     private List<Appointment> appointments = new ArrayList<>();
+
+    @Builder.Default
+    @OneToMany(mappedBy = "address", cascade = CascadeType.ALL)
+    private List<ServiceSale> serviceSales = new ArrayList<>();
+
+    @Builder.Default
+    @OneToMany(mappedBy = "address", cascade = CascadeType.ALL)
+    private List<SpecialistAvailableTime> specialistAvailableTimes = new ArrayList<>();
 }

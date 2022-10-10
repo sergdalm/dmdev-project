@@ -3,11 +3,15 @@ package com.sergdalm.entity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -16,7 +20,8 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Data
-@ToString(exclude = {"client", "specialist", "address", "service"})
+@ToString(exclude = {"client", "specialist", "address", "service", "transaction"})
+@EqualsAndHashCode(exclude = {"client", "specialist", "address", "service", "transaction"})
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -27,16 +32,16 @@ public class Appointment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne(optional = false)
-    private Client client;
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    private User client;
 
-    @ManyToOne(optional = false)
-    private Specialist specialist;
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    private User specialist;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Address address;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Service service;
 
     @Column(nullable = false)
@@ -48,17 +53,30 @@ public class Appointment {
     @Column(nullable = false)
     private Integer lengthMin;
 
-    public void setClient(Client client) {
+    @Column(nullable = false)
+    private Integer price;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    AppointmentStatus status;
+
+    public void setClient(User client) {
         this.client = client;
-        client.getAppointments().add(this);
+        client.getClientAppointments().add(this);
     }
 
-    public void setSpecialist(Specialist specialist) {
+    public void setSpecialist(User specialist) {
         this.specialist = specialist;
-        specialist.getAppointments().add(this);
+        specialist.getClientAppointments().add(this);
     }
 
     public void setAddress(Address address) {
         this.address = address;
+        address.getAppointments().add(this);
+    }
+
+    public void setService(Service service) {
+        this.service = service;
+        service.getAppointments().add(this);
     }
 }

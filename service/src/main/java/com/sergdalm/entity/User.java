@@ -1,38 +1,38 @@
 package com.sergdalm.entity;
 
-import com.sergdalm.convertor.MobilePhoneNumberConvertor;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
+import lombok.ToString;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.Convert;
-import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.OneToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
+@ToString(exclude = {"account", "specialistReviews",
+        "specialistAppointments", "clientAppointments",
+        "specialistServices", "specialistAvailableTimes",
+        "clientReviews", "specialistReviews"})
 @EqualsAndHashCode(of = "email")
 @AllArgsConstructor
 @NoArgsConstructor
-@SuperBuilder
+@Builder
 @Entity
 @Table(name = "users")
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "role")
-public abstract class User {
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -43,6 +43,9 @@ public abstract class User {
 
     @Column(nullable = false)
     private String password;
+
+    @Column(nullable = false)
+    private Role role;
 
     @Column(nullable = false)
     private String firstName;
@@ -58,9 +61,31 @@ public abstract class User {
     private LocalDate birthday;
 
     @Column(unique = true)
-    @Convert(converter = MobilePhoneNumberConvertor.class)
-    private MobilePhoneNumber mobilePhone;
+    private String mobilePhoneNumber;
 
-    @OneToOne
-    private Account account;
+    private String description;
+
+    @Builder.Default
+    @OneToMany(mappedBy = "specialist", cascade = CascadeType.ALL)
+    private List<Review> specialistReviews = new ArrayList<>();
+
+    @Builder.Default
+    @OneToMany(mappedBy = "client", cascade = CascadeType.ALL)
+    private List<Review> clientReviews = new ArrayList<>();
+
+    @Builder.Default
+    @OneToMany(mappedBy = "specialist", cascade = CascadeType.ALL)
+    private List<Appointment> specialistAppointments = new ArrayList<>();
+
+    @Builder.Default
+    @OneToMany(mappedBy = "client", cascade = CascadeType.ALL)
+    private List<Appointment> clientAppointments = new ArrayList<>();
+
+    @Builder.Default
+    @OneToMany(mappedBy = "specialist", cascade = CascadeType.ALL)
+    private List<SpecialistService> specialistServices = new ArrayList<>();
+
+    @Builder.Default
+    @OneToMany(mappedBy = "specialist", cascade = CascadeType.ALL)
+    private List<SpecialistAvailableTime> specialistAvailableTimes = new ArrayList<>();
 }
