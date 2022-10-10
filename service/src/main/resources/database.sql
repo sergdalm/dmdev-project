@@ -1,3 +1,7 @@
+CREATE SCHEMA massage;
+
+SET search_path TO massage, public;
+
 CREATE TABLE users
 (
     id                  SERIAL PRIMARY KEY,
@@ -9,7 +13,7 @@ CREATE TABLE users
     gender              VARCHAR(32)         NOT NULL,
     birthday            DATE                NOT NULL,
     mobile_phone_number VARCHAR(64) UNIQUE,
-    description         JSONB
+    description         VARCHAR(256)
 );
 
 CREATE TABLE service
@@ -57,6 +61,9 @@ CREATE TABLE appointment
     date          DATE                                          NOT NULL,
     start_time    TIME                                          NOT NULL,
     length_min    INT                                           NOT NULL,
+    prise         INT                                           NOT NULL,
+    status        VARCHAR(32)                                   NOT NULL,
+    price         INT                                           NOT NULL,
     UNIQUE (specialist_id, date, start_time)
 );
 
@@ -66,22 +73,6 @@ CREATE TABLE review
     client_id     INT REFERENCES users (id) ON DELETE CASCADE NOT NULL,
     published_at  TIMESTAMP                                   NOT NULL,
     content       VARCHAR(256)                                NOT NULL
-);
-
-CREATE TABLE account
-(
-    id                SERIAL PRIMARY KEY,
-    user_id           INT REFERENCES users (id) ON DELETE CASCADE UNIQUE NOT NULL,
-    current_amount    INT                                                NOT NULL,
-    bank_account_info JSONB
-);
-
-CREATE TABLE transaction
-(
-    from_account_id INT REFERENCES account (id) ON DELETE NO ACTION NOT NULL,
-    to_account_id   INT REFERENCES account (id) ON DELETE NO ACTION NOT NULL,
-    transfer_amount INT                                             NOT NULL,
-    transferred_at  TIMESTAMP                                       NOT NULL
 );
 
 CREATE TABLE service_sale
