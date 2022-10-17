@@ -1,7 +1,7 @@
-package com.sergdalm.integration;
+package com.sergdalm.integration.entity;
 
 import com.sergdalm.EntityUtil;
-import com.sergdalm.entity.Service;
+import com.sergdalm.entity.User;
 import com.sergdalm.util.HibernateTestUtil;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class ServiceIT {
+public class UserIT {
 
     private static SessionFactory sessionFactory;
 
@@ -22,75 +22,76 @@ public class ServiceIT {
     }
 
     @Test
-    void shouldCreateAndGetService() {
+    void shouldCreateAndGetUser() {
         try (Session session = sessionFactory.openSession()) {
             session.beginTransaction();
 
-            Service givenService = EntityUtil.getService();
+            User givenSpecialist = EntityUtil.getUserSpecialist();
 
-            session.persist(givenService);
-            Integer id = givenService.getId();
+            session.persist(givenSpecialist);
+            Integer id = givenSpecialist.getId();
+
             session.flush();
             session.clear();
 
-            Service actualService = session.get(Service.class, id);
+            User actualSpecialist = session.get(User.class, id);
 
-            assertEquals(givenService, actualService);
+            assertEquals(givenSpecialist, actualSpecialist);
 
             session.getTransaction().rollback();
         }
     }
 
     @Test
-    void shouldCreateAndUpdateService() {
+    void shouldCreateAndUpdateUser() {
         try (Session session = sessionFactory.openSession()) {
             session.beginTransaction();
 
-            Service givenService = EntityUtil.getService();
+            User givenSpecialist = EntityUtil.getUserSpecialist();
 
-            session.persist(givenService);
-            Integer id = givenService.getId();
-
-            session.flush();
-            session.clear();
-
-            givenService.setDescription("This is the most relaxing massage");
-            session.update(givenService);
+            session.persist(givenSpecialist);
+            Integer id = givenSpecialist.getId();
 
             session.flush();
             session.clear();
 
-            Service actualService = session.get(Service.class, id);
+            givenSpecialist.setPassword("172939djjd83j");
+            session.update(givenSpecialist);
 
-            assertEquals(givenService, actualService);
+            session.flush();
+            session.clear();
+
+            User actualSpecialist = session.get(User.class, id);
+
+            assertEquals(givenSpecialist, actualSpecialist);
 
             session.getTransaction().rollback();
         }
     }
 
     @Test
-    void shouldCreateAndDeleteService() {
+    void shouldCreateAndDeleteUser() {
         try (Session session = sessionFactory.openSession()) {
             session.beginTransaction();
 
-            Service givenService = EntityUtil.getService();
+            User givenSpecialist = EntityUtil.getUserSpecialist();
 
-            session.persist(givenService);
-            Integer id = givenService.getId();
-
-            session.flush();
-            session.clear();
-
-            Service savedService = session.get(Service.class, id);
-
-            session.delete(savedService);
+            session.persist(givenSpecialist);
+            Integer id = givenSpecialist.getId();
 
             session.flush();
             session.clear();
 
-            Service actualService = session.get(Service.class, id);
+            User savedSpecialist = session.get(User.class, id);
 
-            assertNull(actualService);
+            session.delete(savedSpecialist);
+
+            session.flush();
+            session.clear();
+
+            User actualSpecialist = session.get(User.class, id);
+
+            assertNull(actualSpecialist);
 
             session.getTransaction().rollback();
         }

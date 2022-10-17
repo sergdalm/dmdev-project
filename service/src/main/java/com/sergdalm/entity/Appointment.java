@@ -58,7 +58,7 @@ public class Appointment {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    AppointmentStatus status;
+    private AppointmentStatus status;
 
     public void setClient(User client) {
         this.client = client;

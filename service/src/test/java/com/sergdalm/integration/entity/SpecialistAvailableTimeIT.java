@@ -1,10 +1,8 @@
-package com.sergdalm.integration;
+package com.sergdalm.integration.entity;
 
 import com.sergdalm.EntityUtil;
 import com.sergdalm.entity.Address;
-import com.sergdalm.entity.Service;
-import com.sergdalm.entity.ServiceSale;
-import com.sergdalm.entity.SpecialistService;
+import com.sergdalm.entity.SpecialistAvailableTime;
 import com.sergdalm.entity.User;
 import com.sergdalm.util.HibernateTestUtil;
 import org.hibernate.Session;
@@ -15,18 +13,19 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalTime;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class ServiceSaleIT {
+public class SpecialistAvailableTimeIT {
 
     private static SessionFactory sessionFactory;
 
     private final User specialist = EntityUtil.getUserSpecialist();
     private final Address address = EntityUtil.getAddress();
-    private final Service service = EntityUtil.getService();
-    private final SpecialistService specialistService = EntityUtil.getSpecialistService();
-    private final ServiceSale serviceSale = EntityUtil.getServiceSale();
+    private final SpecialistAvailableTime specialistAvailableTime = EntityUtil.getSpecialistAvailableTime();
+
 
     @BeforeAll
     static void setUp() {
@@ -40,98 +39,93 @@ public class ServiceSaleIT {
 
             session.persist(specialist);
             session.persist(address);
-            session.persist(service);
 
-            specialistService.setSpecialist(specialist);
-            specialistService.setService(service);
-            session.persist(specialistService);
-
-            serviceSale.setSpecialistService(specialistService);
-            serviceSale.setAddress(address);
-            session.persist(serviceSale);
+            specialistAvailableTime.setSpecialist(specialist);
+            specialistAvailableTime.setAddress(address);
+            session.persist(address);
 
             session.getTransaction().commit();
         }
     }
 
     @Test
-    void shouldGetServiceSale() {
+    void shouldGetSpecialistAvailableTime() {
         try (Session session = sessionFactory.openSession()) {
             session.beginTransaction();
 
-            ServiceSale actualServiceSale = session.get(
-                    ServiceSale.class, serviceSale.getId()
+            SpecialistAvailableTime actualSpecialistAvailableTime = session.get(
+                    SpecialistAvailableTime.class, specialistAvailableTime.getId()
             );
 
-            assertEquals(serviceSale, actualServiceSale);
-            assertEquals(specialistService, actualServiceSale.getSpecialistService());
-            assertEquals(address, actualServiceSale.getAddress());
+            assertEquals(specialistAvailableTime, actualSpecialistAvailableTime);
+            assertEquals(specialist, actualSpecialistAvailableTime.getSpecialist());
+            assertEquals(address, actualSpecialistAvailableTime.getAddress());
 
             session.getTransaction().rollback();
         }
     }
 
     @Test
-    void shouldUpdateServiceSale() {
+    void shouldUpdateSpecialistAvailableTime() {
         try (Session session = sessionFactory.openSession()) {
             session.beginTransaction();
 
-            serviceSale.setSalePrice(900);
-            session.update(serviceSale);
+            specialistAvailableTime.setTime(LocalTime.of(16, 0));
+            session.update(specialistAvailableTime);
 
             session.flush();
             session.clear();
 
-            ServiceSale actualServiceSale = session.get(
-                    ServiceSale.class, serviceSale.getId()
+            SpecialistAvailableTime actualSpecialistAvailableTime = session.get(
+                    SpecialistAvailableTime.class, specialistAvailableTime.getId()
             );
 
-            assertEquals(serviceSale, actualServiceSale);
+            assertEquals(specialistAvailableTime, actualSpecialistAvailableTime);
 
             session.getTransaction().rollback();
         }
     }
 
     @Test
-    void shouldDeleteServiceSale() {
+    void shouldDeleteSpecialistAvailableTime() {
         try (Session session = sessionFactory.openSession()) {
             session.beginTransaction();
 
-            session.delete(serviceSale);
+            session.delete(specialistAvailableTime);
 
             session.flush();
             session.clear();
 
-            ServiceSale actualServiceSale =
-                    session.get(ServiceSale.class, serviceSale.getId());
+            SpecialistAvailableTime actualSpecialistAvailableTime =
+                    session.get(SpecialistAvailableTime.class, specialistAvailableTime.getId());
 
-            assertNull(actualServiceSale);
+            assertNull(actualSpecialistAvailableTime);
 
             session.getTransaction().rollback();
         }
     }
 
     @Test
-    void shouldDeleteServiceSaleWhenDeletingSpecialistService() {
+    void shouldDeleteSpecialistAvailableTimeWhenDeletingSpecialist() {
         try (Session session = sessionFactory.openSession()) {
             session.beginTransaction();
 
-            session.delete(specialistService);
+            session.delete(specialist);
 
             session.flush();
             session.clear();
 
-            ServiceSale actualServiceSale =
-                    session.get(ServiceSale.class, serviceSale.getId());
+            SpecialistAvailableTime actualSpecialistAvailableTime =
+                    session.get(SpecialistAvailableTime.class, specialistAvailableTime.getId());
 
-            assertNull(actualServiceSale);
+            assertNull(actualSpecialistAvailableTime);
 
             session.getTransaction().rollback();
         }
     }
 
     @Test
-    void shouldDeleteServiceSaleWhenDeletingAddress() {
+    void shouldDeleteSpecialistAvailableTimeWhenDeletingAddress() {
         try (Session session = sessionFactory.openSession()) {
             session.beginTransaction();
 
@@ -140,23 +134,22 @@ public class ServiceSaleIT {
             session.flush();
             session.clear();
 
-            ServiceSale actualServiceSale =
-                    session.get(ServiceSale.class, serviceSale.getId());
+            SpecialistAvailableTime actualSpecialistAvailableTime =
+                    session.get(SpecialistAvailableTime.class, specialistAvailableTime.getId());
 
-            assertNull(actualServiceSale);
+            assertNull(actualSpecialistAvailableTime);
 
             session.getTransaction().rollback();
         }
     }
+
 
     @AfterEach
     void cleanDataBse() {
         try (Session session = sessionFactory.openSession()) {
             session.beginTransaction();
 
-            session.createSQLQuery("delete from service_sale")
-                    .executeUpdate();
-            session.createSQLQuery("delete from specialist_service")
+            session.createSQLQuery("delete from specialist_available_time")
                     .executeUpdate();
             session.createSQLQuery("delete from users")
                     .executeUpdate();

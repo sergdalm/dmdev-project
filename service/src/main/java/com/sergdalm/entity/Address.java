@@ -31,7 +31,7 @@ public class Address {
     private Integer id;
 
     @Column(nullable = false, unique = true)
-    private String address;
+    private String addressName;
 
     @Column(nullable = false)
     private String description;

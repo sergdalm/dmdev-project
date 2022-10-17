@@ -1,4 +1,4 @@
-package com.sergdalm.integration;
+package com.sergdalm.integration.entity;
 
 import com.sergdalm.EntityUtil;
 import com.sergdalm.entity.Address;

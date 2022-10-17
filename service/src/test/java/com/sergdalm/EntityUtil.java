@@ -82,7 +82,7 @@ public class EntityUtil {
 
     public static Address getAddress() {
         return Address.builder()
-                .address("Nevsky pr. 16, 5")
+                .addressName("Nevsky pr. 16, 5")
                 .description("Nearby subway Gostinny drov")
                 .build();
     }
@@ -96,8 +96,8 @@ public class EntityUtil {
 
     public static Service getService() {
         return Service.builder()
-                .name(ServiceName.CLASSIC_MASSAGE)
-                .description("Classic massage is relaxing")
+                .name(ServiceName.ACUPRESSURE)
+                .description("Good for health")
                 .build();
     }
 

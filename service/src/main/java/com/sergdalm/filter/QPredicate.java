@@ -6,6 +6,7 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
 
@@ -25,18 +26,18 @@ public class QPredicate {
         return this;
     }
 
-    public <T> QPredicate add(List<T> objectList, Function<List<T>, Predicate> function) {
-        if (objectList != null) {
+    public <T> QPredicate add(Collection<T> objectList, Function<Collection<T>, Predicate> function) {
+        if (objectList != null && objectList.size() > 0) {
             predicates.add(function.apply(objectList));
         }
         return this;
     }
 
-    public Predicate  buildAnd() {
+    public Predicate buildAnd() {
         return ExpressionUtils.allOf(predicates);
     }
 
-    public Predicate  buildOr() {
+    public Predicate buildOr() {
         return ExpressionUtils.anyOf(predicates);
     }
 
