@@ -1,5 +1,6 @@
 package com.sergdalm.entity;
 
+import com.sergdalm.dao.DateAndTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -7,15 +8,13 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import java.time.LocalDate;
-import java.time.LocalTime;
 
 @Data
 @ToString(exclude = {"specialist", "address"})
@@ -36,11 +35,8 @@ public class SpecialistAvailableTime {
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Address address;
 
-    @Column(nullable = false)
-    private LocalDate date;
-
-    @Column(nullable = false)
-    private LocalTime time;
+    @Embedded
+    private DateAndTime dateAndTime;
 
     public void setSpecialist(User specialist) {
         this.specialist = specialist;

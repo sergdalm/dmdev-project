@@ -9,7 +9,7 @@ import java.util.List;
 
 @Value
 @Builder
-public final class SpecialistAvailableTimeFilter {
+public class SpecialistAvailableTimeFilter {
     Integer specialistId;
     Integer addressId;
     List<LocalDate> dates;

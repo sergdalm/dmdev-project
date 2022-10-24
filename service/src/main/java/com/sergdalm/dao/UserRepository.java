@@ -12,6 +12,7 @@ import com.sergdalm.entity.User;
 import com.sergdalm.entity.User_;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.springframework.stereotype.Repository;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -23,18 +24,15 @@ import java.util.List;
 import static com.sergdalm.entity.QAppointment.appointment;
 import static com.sergdalm.entity.QUser.user;
 
+@Repository
 public class UserRepository extends RepositoryBase<User, Integer> {
-
-    private SessionFactory sessionFactory;
 
     public UserRepository(SessionFactory sessionFactory) {
         super(User.class, sessionFactory);
-        this.sessionFactory = sessionFactory;
     }
 
-
     public List<User> getUsersByMassageType(List<ServiceName> serviceNames) {
-        Session session = sessionFactory.getCurrentSession();
+        Session session = super.getSessionFactory().getCurrentSession();
         CriteriaBuilder cb = session.getCriteriaBuilder();
         CriteriaQuery<User> criteria = cb.createQuery(User.class);
         Root<User> user = criteria.from(User.class);
@@ -51,7 +49,7 @@ public class UserRepository extends RepositoryBase<User, Integer> {
     }
 
     public List<Tuple> findClientsWithAmountWhoDidNotPaid() {
-        Session session = sessionFactory.getCurrentSession();
+        Session session = super.getSessionFactory().getCurrentSession();
         return new JPAQuery<Tuple>(session)
                 .select(user, appointment.price.sum())
                 .from(user)

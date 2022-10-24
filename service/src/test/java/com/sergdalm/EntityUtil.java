@@ -1,5 +1,6 @@
 package com.sergdalm;
 
+import com.sergdalm.dao.DateAndTime;
 import com.sergdalm.entity.Address;
 import com.sergdalm.entity.Appointment;
 import com.sergdalm.entity.AppointmentStatus;
@@ -12,11 +13,11 @@ import com.sergdalm.entity.ServiceSale;
 import com.sergdalm.entity.SpecialistAvailableTime;
 import com.sergdalm.entity.SpecialistService;
 import com.sergdalm.entity.User;
+import com.sergdalm.entity.UserInfo;
 import lombok.experimental.UtilityClass;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 
 @UtilityClass
 public class EntityUtil {
@@ -25,55 +26,67 @@ public class EntityUtil {
         return User.builder()
                 .email("admin@mail.com")
                 .password("1djh2l")
+                .mobilePhoneNumber("+7(911)123-45-67")
+                .build();
+    }
+
+    public static UserInfo getAdministratorUserInfo() {
+        return UserInfo.builder()
                 .firstName("Alex")
                 .lastName("S")
                 .gender(Gender.FEMALE)
                 .role(Role.ADMINISTRATOR)
                 .birthday(LocalDate.of(1993, 7, 12))
-                .mobilePhoneNumber("+7(911)123-45-67")
                 .gender(Gender.FEMALE)
+                .registeredAt(LocalDateTime.now())
                 .build();
     }
 
     public static User getUserClient() {
         return User.builder()
                 .email("client@mail.com")
-                .role(Role.CLIENT)
+                .mobilePhoneNumber("+7(911)545-78-22")
                 .password("dn38d")
+                .build();
+    }
+
+    public static UserInfo getClientUserInfo() {
+        return UserInfo.builder()
+                .role(Role.CLIENT)
                 .firstName("Svetlana")
                 .lastName("Petrova")
                 .gender(Gender.FEMALE)
                 .birthday(LocalDate.of(1985, 3, 1))
-                .mobilePhoneNumber("+7(911)545-78-22")
-                .birthday(LocalDate.of(1993, 7, 12))
                 .gender(Gender.FEMALE)
+                .registeredAt(LocalDateTime.now())
                 .build();
     }
 
     public static User getUserSpecialist() {
         return User.builder()
                 .email("dmitry@mail.com")
+                .mobilePhoneNumber("+7(911)222-34-55")
                 .password("39239")
+                .build();
+    }
+
+    public static UserInfo getSpecialistUserInfo() {
+        return UserInfo.builder()
                 .role(Role.SPECIALIST)
                 .firstName("Dmitry")
                 .lastName("Cheremuhin")
                 .gender(Gender.FEMALE)
                 .birthday(LocalDate.of(1977, 5, 25))
-                .mobilePhoneNumber("+7(911)222-34-55")
                 .gender(Gender.FEMALE)
-                .description("""
-                        {
-                        "description": "description",
-                        "experience (years)": 6
-                        }
-                        """)
+                .description("description")
+                .registeredAt(LocalDateTime.now())
                 .build();
     }
 
     public static Appointment getAppointment() {
         return Appointment.builder()
-                .date(LocalDate.now())
-                .startTime(LocalTime.of(12, 0))
+                .dateAndTime(new DateAndTime(
+                        LocalDateTime.of(2022, 10, 20, 12, 0)))
                 .lengthMin(90)
                 .price(2000)
                 .status(AppointmentStatus.CREATED_NOT_CONFIRMED)
@@ -111,8 +124,8 @@ public class EntityUtil {
 
     public static SpecialistAvailableTime getSpecialistAvailableTime() {
         return SpecialistAvailableTime.builder()
-                .date(LocalDate.of(2022, 10, 15))
-                .time(LocalTime.of(12, 0))
+                .dateAndTime(new DateAndTime(
+                        LocalDateTime.of(2022, 10, 15, 12, 0)))
                 .build();
     }
 

@@ -1,19 +1,28 @@
+CREATE DATABASE massage_project;
+
 CREATE SCHEMA massage;
 
-SET search_path TO massage, public;
+SET search_path TO massage;
 
 CREATE TABLE users
 (
     id                  SERIAL PRIMARY KEY,
     email               VARCHAR(128) UNIQUE NOT NULL,
-    password            VARCHAR(128)        NOT NULL,
-    role                VARCHAR(32)         NOT NULL,
-    first_name          VARCHAR(128)        NOT NULL,
-    last_name           VARCHAR(128)        NOT NULL,
-    gender              VARCHAR(32)         NOT NULL,
-    birthday            DATE                NOT NULL,
-    mobile_phone_number VARCHAR(64) UNIQUE,
-    description         VARCHAR(256)
+    mobile_phone_number VARCHAR(64) UNIQUE  NOT NULL,
+    password            VARCHAR(128)        NOT NULL
+);
+
+
+CREATE TABLE user_info
+(
+    user_id       INT PRIMARY KEY REFERENCES users (id),
+    role          VARCHAR(32)  NOT NULL,
+    first_name    VARCHAR(128) NOT NULL,
+    last_name     VARCHAR(128) NOT NULL,
+    gender        VARCHAR(32)  NOT NULL,
+    birthday      DATE         NOT NULL,
+    registered_at TIMESTAMP    NOT NULL,
+    description   VARCHAR(256)
 );
 
 CREATE TABLE service
@@ -69,6 +78,7 @@ CREATE TABLE appointment
 
 CREATE TABLE review
 (
+    id            SERIAL PRIMARY KEY,
     specialist_id INT REFERENCES users (id) ON DELETE CASCADE NOT NULL,
     client_id     INT REFERENCES users (id) ON DELETE CASCADE NOT NULL,
     published_at  TIMESTAMP                                   NOT NULL,
@@ -77,6 +87,7 @@ CREATE TABLE review
 
 CREATE TABLE service_sale
 (
+    id                    SERIAL PRIMARY KEY,
     specialist_service_id INT REFERENCES specialist_service (id) ON DELETE CASCADE NOT NULL,
     address_id            INT REFERENCES address (id) ON DELETE CASCADE            NOT NULL,
     start_day             DATE                                                     NOT NULL,

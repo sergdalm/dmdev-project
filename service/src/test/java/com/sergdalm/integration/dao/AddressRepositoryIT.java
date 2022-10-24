@@ -1,14 +1,11 @@
 package com.sergdalm.integration.dao;
 
 import com.sergdalm.EntityUtil;
+import com.sergdalm.config.BeanProvider;
 import com.sergdalm.dao.AddressRepository;
 import com.sergdalm.entity.Address;
-import com.sergdalm.util.HibernateTestUtil;
-import com.sergdalm.util.TestDataImporter;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -19,23 +16,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class AddressRepositoryIT {
 
-    private static final SessionFactory SESSION_FACTORY = HibernateTestUtil.buildSessionFactory();
-    private final AddressRepository addressRepository = new AddressRepository(SESSION_FACTORY);
-
-    @BeforeAll
-    public static void initDb() {
-        TestDataImporter.importData(SESSION_FACTORY);
-    }
-
-    @AfterAll
-    public static void finish() {
-        SESSION_FACTORY.close();
-    }
-
+    private final SessionFactory sessionFactory = BeanProvider.getSessionFactory();
+    private final AddressRepository addressRepository = BeanProvider.getAddressRepository();
 
     @Test
     void saveAndFindById() {
-        Session session = SESSION_FACTORY.getCurrentSession();
+        Session session = sessionFactory.getCurrentSession();
         session.beginTransaction();
 
         Address address = EntityUtil.getAddress();
@@ -53,30 +39,44 @@ class AddressRepositoryIT {
 
     @Test
     void findAll() {
-        Session session = SESSION_FACTORY.getCurrentSession();
+        Session session = sessionFactory.getCurrentSession();
         session.beginTransaction();
 
-        List<Address> actualAddresses = addressRepository.findAll();
-        List<String> actualAddressNames = actualAddresses.stream()
-                .map(Address::getAddressName)
-                .toList();
+        Address address1 = EntityUtil.getAddress();
+        Address address2 = Address.builder()
+                .addressName("Malaya Morskaya 16")
+                .description("Go out Admiralteyskaya subway station and go to the right")
+                .build();
+        Address address3 = Address.builder()
+                .addressName("Ploshad Stachek 9")
+                .description("Go out Narvsaky subway station and cross the street")
+                .build();
+        session.save(address1);
+        session.save(address2);
+        session.save(address3);
+        session.flush();
+        session.clear();
 
-        assertThat(actualAddressNames).hasSize(2);
-        assertThat(actualAddressNames).contains("Malaya Morskaya 16", "Ploshad Stachek 9");
+        List<Address> actualAddresses = addressRepository.findAll();
+
+        assertThat(actualAddresses).hasSize(3);
+        assertThat(actualAddresses).contains(address1, address2, address3);
 
         session.getTransaction().rollback();
     }
 
     @Test
-    void saveAndUpdate() {
-        Session session = SESSION_FACTORY.getCurrentSession();
+    void update() {
+        Session session = sessionFactory.getCurrentSession();
         session.beginTransaction();
 
         Address address = EntityUtil.getAddress();
-        addressRepository.save(address);
+        session.save(address);
         session.flush();
         session.clear();
-        address.setDescription("Nearby subway Gostinny drov, go to the right");
+
+        String newDescription = "Nearby subway Gostinny drov, go to the right";
+        address.setDescription(newDescription);
         addressRepository.update(address);
         session.flush();
         session.clear();
@@ -84,13 +84,14 @@ class AddressRepositoryIT {
 
         assertThat(actualOptionalAddress).isPresent();
         assertEquals(address, actualOptionalAddress.get());
+        assertEquals(newDescription, actualOptionalAddress.get().getDescription());
 
         session.getTransaction().rollback();
     }
 
     @Test
     void SaveAndDelete() {
-        Session session = SESSION_FACTORY.getCurrentSession();
+        Session session = sessionFactory.getCurrentSession();
         session.beginTransaction();
 
         Address address = EntityUtil.getAddress();
@@ -104,5 +105,4 @@ class AddressRepositoryIT {
 
         session.getTransaction().rollback();
     }
-
 }

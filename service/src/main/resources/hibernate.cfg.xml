@@ -14,6 +14,7 @@
         <property name="hibernate.current_session_context_class">thread</property>
 
         <mapping class="com.sergdalm.entity.User"/>
+        <mapping class="com.sergdalm.entity.UserInfo"/>
         <mapping class="com.sergdalm.entity.Address"/>
         <mapping class="com.sergdalm.entity.Appointment"/>
         <mapping class="com.sergdalm.entity.Review"/>

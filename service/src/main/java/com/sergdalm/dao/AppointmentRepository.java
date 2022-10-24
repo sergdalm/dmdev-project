@@ -7,22 +7,21 @@ import com.sergdalm.entity.AppointmentStatus;
 import com.sergdalm.filter.QPredicate;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 import static com.sergdalm.entity.QAppointment.appointment;
 
+@Repository
 public class AppointmentRepository extends RepositoryBase<Appointment, Integer> {
-
-    private final SessionFactory sessionFactory;
 
     public AppointmentRepository(SessionFactory sessionFactory) {
         super(Appointment.class, sessionFactory);
-        this.sessionFactory = sessionFactory;
     }
 
     public List<Appointment> findByStatus(List<AppointmentStatus> statuses) {
-        Session session = sessionFactory.getCurrentSession();
+        Session session = super.getSessionFactory().getCurrentSession();
         Predicate predicate = QPredicate.builder()
                 .add(statuses, appointment.status::in)
                 .buildAnd();

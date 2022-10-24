@@ -2,45 +2,38 @@ package com.sergdalm.integration.dao;
 
 import com.querydsl.core.Tuple;
 import com.sergdalm.EntityUtil;
+import com.sergdalm.config.BeanProvider;
+import com.sergdalm.dao.DateAndTime;
 import com.sergdalm.dao.UserRepository;
+import com.sergdalm.entity.Address;
+import com.sergdalm.entity.Appointment;
+import com.sergdalm.entity.AppointmentStatus;
+import com.sergdalm.entity.Service;
 import com.sergdalm.entity.ServiceName;
+import com.sergdalm.entity.SpecialistService;
 import com.sergdalm.entity.User;
-import com.sergdalm.util.HibernateTestUtil;
-import com.sergdalm.util.TestDataImporter;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class UserRepositoryIT {
+class UserRepositoryIT {
 
-    private static final SessionFactory SESSION_FACTORY = HibernateTestUtil.buildSessionFactory();
-    private final UserRepository userRepository = new UserRepository(SESSION_FACTORY);
-
-    @BeforeAll
-    public static void initDb() {
-        TestDataImporter.importData(SESSION_FACTORY);
-    }
-
-    @AfterAll
-    public static void finish() {
-        SESSION_FACTORY.close();
-    }
+    private final SessionFactory sessionFactory = BeanProvider.getSessionFactory();
+    private final UserRepository userRepository = BeanProvider.getUserRepository();
 
     @Test
     void saveAndFindByIdUser() {
-        Session session = SESSION_FACTORY.getCurrentSession();
+        Session session = sessionFactory.getCurrentSession();
         session.beginTransaction();
 
-        User user = EntityUtil.getUserClient();
+        User user = EntityUtil.getUserAdministrator();
         userRepository.save(user);
         session.flush();
         session.clear();
@@ -54,51 +47,62 @@ public class UserRepositoryIT {
     }
 
     @Test
-    void getAll() {
-        Session session = SESSION_FACTORY.getCurrentSession();
+    void findAll() {
+        Session session = sessionFactory.getCurrentSession();
         session.beginTransaction();
+
+        User user1 = EntityUtil.getUserSpecialist();
+        User user2 = EntityUtil.getUserClient();
+        session.save(user1);
+        session.save(user2);
+        session.flush();
+        session.clear();
 
         List<User> actualUsers = userRepository.findAll();
 
         assertThat(actualUsers).isNotEmpty();
-        assertThat(actualUsers.stream().map(User::getEmail).toList())
-                .contains("dmitry@gmail.com", "natali@gmail.com",
-                        "alex@gmail.com", "svetlana@gmail.com",
-                        "maria@gmail.com", "kirill@gmail.com",
-                        "anna@gmail.com", "elena@gmail.com",
-                        "tamara@gmail.com");
+        assertThat(actualUsers).hasSize(2);
+        assertThat(actualUsers).contains(user1, user2);
 
         session.getTransaction().rollback();
     }
 
     @Test
     void update() {
-        Session session = SESSION_FACTORY.getCurrentSession();
+        Session session = sessionFactory.getCurrentSession();
         session.beginTransaction();
 
-        TestDataImporter.specialistDmitry.setPassword("11123456yg");
-        userRepository.update(TestDataImporter.specialistDmitry);
-
+        User user = EntityUtil.getUserSpecialist();
+        session.save(user);
         session.flush();
         session.clear();
 
-        Optional<User> actualOptionalUser = userRepository.findById(TestDataImporter.specialistDmitry.getId());
+        String newNumber = "+7(911)475-76-13";
+        user.setMobilePhoneNumber(newNumber);
+        userRepository.update(user);
+        session.flush();
+        session.clear();
+        Optional<User> actualOptionalUser = userRepository.findById(user.getId());
 
         assertThat(actualOptionalUser).isPresent();
-        assertEquals(TestDataImporter.specialistDmitry, actualOptionalUser.get());
+        assertEquals(user, actualOptionalUser.get());
+        assertEquals(newNumber, actualOptionalUser.get().getMobilePhoneNumber());
 
         session.getTransaction().rollback();
     }
 
     @Test
     void delete() {
-        Session session = SESSION_FACTORY.getCurrentSession();
+        Session session = sessionFactory.getCurrentSession();
         session.beginTransaction();
 
-        userRepository.delete(TestDataImporter.clientElena);
+        User user = EntityUtil.getUserSpecialist();
+        session.save(user);
+        session.flush();
+        session.clear();
 
-        Optional<User> actualOptionalUser = userRepository
-                .findById(TestDataImporter.clientElena.getId());
+        userRepository.delete(user);
+        Optional<User> actualOptionalUser = userRepository.findById(user.getId());
 
         assertThat(actualOptionalUser).isNotPresent();
 
@@ -107,44 +111,69 @@ public class UserRepositoryIT {
 
     @Test
     void getSpecialistsWhoHCanDoParticularMassageTypes() {
-        Session session = SESSION_FACTORY.getCurrentSession();
+        Session session = sessionFactory.getCurrentSession();
         session.beginTransaction();
-        List<ServiceName> services = List.of(ServiceName.CUPPING_MASSAGE);
+
+        User specialist = EntityUtil.getUserSpecialist();
+        Service service = Service.builder()
+                .name(ServiceName.LYMPHATIC_DRAINAGE_MASSAGE)
+                .description("Good for losing weight")
+                .build();
+        session.save(specialist);
+        session.save(service);
+        SpecialistService specialistService = SpecialistService.builder()
+                .lengthMin(90)
+                .price(1500)
+                .build();
+        specialistService.setSpecialist(specialist);
+        specialistService.setService(service);
+        session.save(specialistService);
+
+        List<ServiceName> services = List.of(ServiceName.LYMPHATIC_DRAINAGE_MASSAGE);
         List<User> actualUsers = userRepository.getUsersByMassageType(services);
 
-        assertEquals(1, actualUsers.size());
-        assertThat(actualUsers).contains(TestDataImporter.specialistDmitry);
+        assertThat(actualUsers).hasSize(1);
+        assertThat(actualUsers).contains(specialist);
 
         session.getTransaction().rollback();
     }
 
     @Test
     void findClientsWhoDidNotPaid() {
-        Session session = SESSION_FACTORY.getCurrentSession();
+        Session session = sessionFactory.getCurrentSession();
         session.beginTransaction();
+
+        Service service = EntityUtil.getService();
+        User client = EntityUtil.getUserClient();
+        User specialist = EntityUtil.getUserSpecialist();
+        Address address = Address.builder()
+                .addressName("Stachek 123")
+                .description("Near subway Narvsakya")
+                .build();
+        Appointment appointment = Appointment.builder()
+                .dateAndTime(new DateAndTime(LocalDateTime.of(2022, 10, 20, 12, 0)))
+                .lengthMin(90)
+                .price(2000)
+                .status(AppointmentStatus.COMPLETED_NOT_PAID)
+                .build();
+        session.save(client);
+        session.save(specialist);
+        session.save(address);
+        session.save(service);
+        appointment.setClient(client);
+        appointment.setSpecialist(specialist);
+        appointment.setAddress(address);
+        appointment.setService(service);
+        session.save(appointment);
 
         List<Tuple> actualUserAndAmountList = userRepository.findClientsWithAmountWhoDidNotPaid();
 
-        List<String> actualUserEmails = actualUserAndAmountList.stream()
+        List<User> actualUserList = actualUserAndAmountList.stream()
                 .map(it -> it.get(0, User.class))
-                .filter(Objects::nonNull)
-                .map(User::getEmail)
-                .toList();
-        List<Integer> amountList = actualUserAndAmountList.stream()
-                .map(it -> it.get(1, Integer.class))
                 .toList();
 
-        assertThat(actualUserAndAmountList).hasSize(2);
-        assertThat(actualUserEmails).contains("elena@gmail.com", "tamara@gmail.com");
-        assertThat(amountList).contains(3000, 2000);
-
-        session.getTransaction().rollback();
-    }
-
-    @Test
-    void findClientsWithNoAppointmentAndJoinedMoreThanThisAmountOfDays() {
-        Session session = SESSION_FACTORY.getCurrentSession();
-        session.beginTransaction();
+        assertThat(actualUserAndAmountList).hasSize(1);
+        assertThat(actualUserList).contains(client);
 
         session.getTransaction().rollback();
     }

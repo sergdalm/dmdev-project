@@ -1,15 +1,12 @@
 package com.sergdalm.integration.dao;
 
 import com.sergdalm.EntityUtil;
+import com.sergdalm.config.BeanProvider;
 import com.sergdalm.dao.ReviewRepository;
 import com.sergdalm.entity.Review;
 import com.sergdalm.entity.User;
-import com.sergdalm.util.HibernateTestUtil;
-import com.sergdalm.util.TestDataImporter;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -20,37 +17,21 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class ReviewRepositoryIT {
 
-    private static final SessionFactory SESSION_FACTORY = HibernateTestUtil.buildSessionFactory();
-    private static final User SPECIALIST = EntityUtil.getUserSpecialist();
-    private static final User CLIENT = EntityUtil.getUserClient();
-    private final ReviewRepository reviewRepository = new ReviewRepository(SESSION_FACTORY);
-
-    @BeforeAll
-    public static void initDb() {
-        TestDataImporter.importData(SESSION_FACTORY);
-
-        Session session = SESSION_FACTORY.getCurrentSession();
-        session.beginTransaction();
-
-        session.save(SPECIALIST);
-        session.save(CLIENT);
-
-        session.getTransaction().commit();
-    }
-
-    @AfterAll
-    public static void finish() {
-        SESSION_FACTORY.close();
-    }
+    private final SessionFactory sessionFactory = BeanProvider.getSessionFactory();
+    private final ReviewRepository reviewRepository = BeanProvider.getReviewRepository();
 
     @Test
     void SaveAndFindById() {
-        Session session = SESSION_FACTORY.getCurrentSession();
+        Session session = sessionFactory.getCurrentSession();
         session.beginTransaction();
 
+        User client = EntityUtil.getUserClient();
+        User specialist = EntityUtil.getUserSpecialist();
+        session.save(client);
+        session.save(specialist);
         Review review = EntityUtil.getReview();
-        review.setClient(CLIENT);
-        review.setSpecialist(SPECIALIST);
+        review.setClient(client);
+        review.setSpecialist(specialist);
         reviewRepository.save(review);
         session.flush();
         session.clear();
@@ -67,39 +48,46 @@ class ReviewRepositoryIT {
 
     @Test
     void SaveAndUpdate() {
-        Session session = SESSION_FACTORY.getCurrentSession();
+        Session session = sessionFactory.getCurrentSession();
         session.beginTransaction();
 
+        User client = EntityUtil.getUserClient();
+        User specialist = EntityUtil.getUserSpecialist();
+        session.save(client);
+        session.save(specialist);
         Review review = EntityUtil.getReview();
-        review.setClient(CLIENT);
-        review.setSpecialist(SPECIALIST);
+        review.setClient(client);
+        review.setSpecialist(specialist);
         reviewRepository.save(review);
         session.flush();
         session.clear();
-        review.setContent("Great!");
+
+        String newContent = "Great!";
+        review.setContent(newContent);
         reviewRepository.update(review);
         session.flush();
         session.clear();
-
         Optional<Review> actualOptionalUpdatedReview = reviewRepository.findById(review.getId());
-
 
         assertThat(actualOptionalUpdatedReview).isPresent();
         assertEquals(review, actualOptionalUpdatedReview.get());
+        assertEquals(newContent, actualOptionalUpdatedReview.get().getContent());
 
         session.getTransaction().rollback();
     }
 
     @Test
     void saveAndDelete() {
-        Session session = SESSION_FACTORY.getCurrentSession();
+        Session session = sessionFactory.getCurrentSession();
         session.beginTransaction();
 
+        User client = EntityUtil.getUserClient();
+        User specialist = EntityUtil.getUserSpecialist();
+        session.save(client);
+        session.save(specialist);
         Review review = EntityUtil.getReview();
-        review.setClient(CLIENT);
-        review.setSpecialist(SPECIALIST);
-        review.setClient(CLIENT);
-        review.setSpecialist(SPECIALIST);
+        review.setClient(client);
+        review.setSpecialist(specialist);
         reviewRepository.save(review);
         session.flush();
         session.clear();
@@ -114,16 +102,24 @@ class ReviewRepositoryIT {
 
     @Test
     void findAll() {
-        Session session = SESSION_FACTORY.getCurrentSession();
+        Session session = sessionFactory.getCurrentSession();
         session.beginTransaction();
 
-        List<Review> actualAllReviews = reviewRepository.findAll();
-        List<String> actualAllReviewContentList = actualAllReviews.stream()
-                .map(Review::getContent)
-                .toList();
+        User client = EntityUtil.getUserClient();
+        User specialist = EntityUtil.getUserSpecialist();
+        session.save(client);
+        session.save(specialist);
+        Review review = EntityUtil.getReview();
+        review.setClient(client);
+        review.setSpecialist(specialist);
+        reviewRepository.save(review);
+        session.flush();
+        session.clear();
 
-        assertThat(actualAllReviewContentList).hasSize(2);
-        assertThat(actualAllReviewContentList).contains("Dmitry is ver good specialist", "Good");
+        List<Review> actualAllReviews = reviewRepository.findAll();
+
+        assertThat(actualAllReviews).hasSize(1);
+        assertThat(actualAllReviews).contains(review);
 
         session.getTransaction().rollback();
     }

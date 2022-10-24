@@ -1,16 +1,14 @@
 package com.sergdalm.integration.dao;
 
 import com.sergdalm.EntityUtil;
+import com.sergdalm.config.BeanProvider;
 import com.sergdalm.dao.SpecialistServiceRepository;
 import com.sergdalm.entity.Service;
+import com.sergdalm.entity.ServiceName;
 import com.sergdalm.entity.SpecialistService;
 import com.sergdalm.entity.User;
-import com.sergdalm.util.HibernateTestUtil;
-import com.sergdalm.util.TestDataImporter;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -19,24 +17,14 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class SpecialistServiceRepositoryIT {
+class SpecialistServiceRepositoryIT {
 
-    private static final SessionFactory SESSION_FACTORY = HibernateTestUtil.buildSessionFactory();
-    private final SpecialistServiceRepository specialistServiceRepository = new SpecialistServiceRepository(SESSION_FACTORY);
-
-    @BeforeAll
-    public static void initDb() {
-        TestDataImporter.importData(SESSION_FACTORY);
-    }
-
-    @AfterAll
-    public static void finish() {
-        SESSION_FACTORY.close();
-    }
+    private final SessionFactory sessionFactory = BeanProvider.getSessionFactory();
+    private final SpecialistServiceRepository specialistServiceRepository = BeanProvider.getSpecialistServiceRepository();
 
     @Test
     void saveAndFindById() {
-        Session session = SESSION_FACTORY.getCurrentSession();
+        Session session = sessionFactory.getCurrentSession();
         session.beginTransaction();
 
         Service service = EntityUtil.getService();
@@ -60,27 +48,43 @@ public class SpecialistServiceRepositoryIT {
 
     @Test
     void findAll() {
-        Session session = SESSION_FACTORY.getCurrentSession();
+        Session session = sessionFactory.getCurrentSession();
         session.beginTransaction();
 
-        List<SpecialistService> actualSpecialistServiceList = specialistServiceRepository.findAll();
-        Integer actualSpecialistServicePriceSum = actualSpecialistServiceList.stream()
-                .mapToInt(SpecialistService::getPrice)
-                .sum();
-        Integer actualSpecialistServiceLengthSum = actualSpecialistServiceList.stream()
-                .mapToInt(SpecialistService::getLengthMin)
-                .sum();
+        Service service1 = EntityUtil.getService();
+        Service service2 = Service.builder()
+                .name(ServiceName.HONEY_MASSAGE)
+                .description("Good for health")
+                .build();
+        SpecialistService specialistService1 = EntityUtil.getSpecialistService();
+        SpecialistService specialistService2 = SpecialistService.builder()
+                .price(1500)
+                .lengthMin(90)
+                .build();
+        User specialist = EntityUtil.getUserSpecialist();
+        session.save(service1);
+        session.save(service2);
+        session.save(specialist);
+        specialistService1.setSpecialist(specialist);
+        specialistService2.setSpecialist(specialist);
+        specialistService1.setService(service1);
+        specialistService2.setService(service2);
+        session.save(specialistService1);
+        session.save(specialistService2);
+        session.flush();
+        session.clear();
 
-        assertThat(actualSpecialistServiceList).hasSize(14);
-        assertEquals(23500, actualSpecialistServicePriceSum);
-        assertEquals(1050, actualSpecialistServiceLengthSum);
+        List<SpecialistService> actualSpecialistServiceList = specialistServiceRepository.findAll();
+
+        assertThat(actualSpecialistServiceList).hasSize(2);
+        assertThat(actualSpecialistServiceList).contains(specialistService1, specialistService2);
 
         session.getTransaction().rollback();
     }
 
     @Test
-    void saveAndUpdate() {
-        Session session = SESSION_FACTORY.getCurrentSession();
+    void update() {
+        Session session = sessionFactory.getCurrentSession();
         session.beginTransaction();
 
         Service service = EntityUtil.getService();
@@ -90,13 +94,13 @@ public class SpecialistServiceRepositoryIT {
         SpecialistService specialistService = EntityUtil.getSpecialistService();
         specialistService.setSpecialist(specialist);
         specialistService.setService(service);
-        specialistServiceRepository.save(specialistService);
+        session.save(specialistService);
         session.flush();
         session.clear();
+
         Integer newPrice = 3000;
         specialistService.setPrice(newPrice);
         specialistServiceRepository.update(specialistService);
-
         Optional<SpecialistService> actualOptionalSpecialistService = specialistServiceRepository.findById(specialistService.getId());
 
         assertThat(actualOptionalSpecialistService).isPresent();
@@ -107,8 +111,8 @@ public class SpecialistServiceRepositoryIT {
     }
 
     @Test
-    void saveAndDelete() {
-        Session session = SESSION_FACTORY.getCurrentSession();
+    void delete() {
+        Session session = sessionFactory.getCurrentSession();
         session.beginTransaction();
 
         Service service = EntityUtil.getService();
@@ -118,11 +122,11 @@ public class SpecialistServiceRepositoryIT {
         SpecialistService specialistService = EntityUtil.getSpecialistService();
         specialistService.setSpecialist(specialist);
         specialistService.setService(service);
-        specialistServiceRepository.save(specialistService);
+        session.save(specialistService);
         session.flush();
         session.clear();
-        specialistServiceRepository.delete(specialistService);
 
+        specialistServiceRepository.delete(specialistService);
         Optional<SpecialistService> actualOptionalSpecialistService = specialistServiceRepository.findById(specialistService.getId());
 
         assertThat(actualOptionalSpecialistService).isNotPresent();

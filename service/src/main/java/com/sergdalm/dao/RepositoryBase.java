@@ -27,8 +27,7 @@ public abstract class RepositoryBase<E, T extends Serializable> implements Repos
 
     @Override
     public Optional<E> findById(T id) {
-        Session session = sessionFactory.getCurrentSession();
-        return Optional.ofNullable(session.find(clazz, id));
+        return Optional.ofNullable(sessionFactory.getCurrentSession().find(clazz, id));
     }
 
     @Override
@@ -52,5 +51,9 @@ public abstract class RepositoryBase<E, T extends Serializable> implements Repos
     public void update(E entity) {
         Session session = sessionFactory.getCurrentSession();
         session.merge(entity);
+    }
+
+    protected SessionFactory getSessionFactory() {
+        return sessionFactory;
     }
 }

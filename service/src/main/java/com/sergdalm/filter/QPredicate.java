@@ -4,6 +4,7 @@ import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Predicate;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -26,9 +27,9 @@ public class QPredicate {
         return this;
     }
 
-    public <T> QPredicate add(Collection<T> objectList, Function<Collection<T>, Predicate> function) {
-        if (objectList != null && objectList.size() > 0) {
-            predicates.add(function.apply(objectList));
+    public <T> QPredicate add(Collection<T> collection, Function<Collection<T>, Predicate> function) {
+        if (CollectionUtils.isNotEmpty(collection)) {
+            predicates.add(function.apply(collection));
         }
         return this;
     }
@@ -40,6 +41,4 @@ public class QPredicate {
     public Predicate buildOr() {
         return ExpressionUtils.anyOf(predicates);
     }
-
-
 }

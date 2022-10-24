@@ -1,12 +1,10 @@
 package com.sergdalm.integration.entity;
 
 import com.sergdalm.EntityUtil;
+import com.sergdalm.config.BeanProvider;
 import com.sergdalm.entity.User;
-import com.sergdalm.util.HibernateTestUtil;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -14,91 +12,65 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class UserIT {
 
-    private static SessionFactory sessionFactory;
-
-    @BeforeAll
-    static void setSessionFactory() {
-        sessionFactory = HibernateTestUtil.buildSessionFactory();
-    }
+    private final SessionFactory sessionFactory = BeanProvider.getSessionFactory();
 
     @Test
     void shouldCreateAndGetUser() {
-        try (Session session = sessionFactory.openSession()) {
-            session.beginTransaction();
+        Session session = sessionFactory.getCurrentSession();
+        session.beginTransaction();
 
-            User givenSpecialist = EntityUtil.getUserSpecialist();
+        User givenSpecialist = EntityUtil.getUserSpecialist();
+        session.persist(givenSpecialist);
+        session.flush();
+        session.clear();
 
-            session.persist(givenSpecialist);
-            Integer id = givenSpecialist.getId();
+        User actualSpecialist = session.get(User.class, givenSpecialist.getId());
 
-            session.flush();
-            session.clear();
+        assertEquals(givenSpecialist, actualSpecialist);
 
-            User actualSpecialist = session.get(User.class, id);
-
-            assertEquals(givenSpecialist, actualSpecialist);
-
-            session.getTransaction().rollback();
-        }
+        session.getTransaction().rollback();
     }
 
     @Test
     void shouldCreateAndUpdateUser() {
-        try (Session session = sessionFactory.openSession()) {
-            session.beginTransaction();
+        Session session = sessionFactory.getCurrentSession();
+        session.beginTransaction();
 
-            User givenSpecialist = EntityUtil.getUserSpecialist();
+        User givenSpecialist = EntityUtil.getUserSpecialist();
+        session.persist(givenSpecialist);
+        session.flush();
+        session.clear();
 
-            session.persist(givenSpecialist);
-            Integer id = givenSpecialist.getId();
+        givenSpecialist.setPassword("172939djjd83j");
+        session.update(givenSpecialist);
+        session.flush();
+        session.clear();
+        User actualSpecialist = session.get(User.class, givenSpecialist.getId());
 
-            session.flush();
-            session.clear();
+        assertEquals(givenSpecialist, actualSpecialist);
 
-            givenSpecialist.setPassword("172939djjd83j");
-            session.update(givenSpecialist);
-
-            session.flush();
-            session.clear();
-
-            User actualSpecialist = session.get(User.class, id);
-
-            assertEquals(givenSpecialist, actualSpecialist);
-
-            session.getTransaction().rollback();
-        }
+        session.getTransaction().rollback();
     }
 
     @Test
     void shouldCreateAndDeleteUser() {
-        try (Session session = sessionFactory.openSession()) {
-            session.beginTransaction();
+        Session session = sessionFactory.getCurrentSession();
+        session.beginTransaction();
 
-            User givenSpecialist = EntityUtil.getUserSpecialist();
+        User givenSpecialist = EntityUtil.getUserSpecialist();
 
-            session.persist(givenSpecialist);
-            Integer id = givenSpecialist.getId();
+        session.persist(givenSpecialist);
+        Integer id = givenSpecialist.getId();
+        session.flush();
+        session.clear();
 
-            session.flush();
-            session.clear();
+        session.delete(givenSpecialist);
+        session.flush();
+        session.clear();
+        User actualSpecialist = session.get(User.class, id);
 
-            User savedSpecialist = session.get(User.class, id);
+        assertNull(actualSpecialist);
 
-            session.delete(savedSpecialist);
-
-            session.flush();
-            session.clear();
-
-            User actualSpecialist = session.get(User.class, id);
-
-            assertNull(actualSpecialist);
-
-            session.getTransaction().rollback();
-        }
-    }
-
-    @AfterAll
-    static void closeSessionFactory() {
-        sessionFactory.close();
+        session.getTransaction().rollback();
     }
 }
