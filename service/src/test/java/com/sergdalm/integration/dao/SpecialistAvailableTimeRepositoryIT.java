@@ -1,17 +1,18 @@
 package com.sergdalm.integration.dao;
 
 import com.sergdalm.EntityUtil;
-import com.sergdalm.config.BeanProvider;
-import com.sergdalm.dao.DateAndTime;
 import com.sergdalm.dao.SpecialistAvailableTimeRepository;
 import com.sergdalm.entity.Address;
+import com.sergdalm.entity.DateAndTime;
 import com.sergdalm.entity.SpecialistAvailableTime;
 import com.sergdalm.entity.User;
 import com.sergdalm.filter.SpecialistAvailableTimeFilter;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -22,122 +23,103 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@SpringBootTest
+@RequiredArgsConstructor
+@Transactional
 class SpecialistAvailableTimeRepositoryIT {
 
-    private final SessionFactory sessionFactory = BeanProvider.getSessionFactory();
-    private final SpecialistAvailableTimeRepository specialistAvailableTimeRepository = BeanProvider.getSpecialistAvailableTimeRepository();
+    private final EntityManager entityManager;
+    private final SpecialistAvailableTimeRepository specialistAvailableTimeRepository;
 
     @Test
     void findById() {
-        Session session = sessionFactory.getCurrentSession();
-        session.beginTransaction();
-
         User specialist = EntityUtil.getUserSpecialist();
         Address address = EntityUtil.getAddress();
-        session.persist(specialist);
-        session.persist(address);
+        entityManager.persist(specialist);
+        entityManager.persist(address);
         SpecialistAvailableTime specialistAvailableTime = EntityUtil.getSpecialistAvailableTime();
         specialistAvailableTime.setSpecialist(specialist);
         specialistAvailableTime.setAddress(address);
         specialistAvailableTimeRepository.save(specialistAvailableTime);
-        session.flush();
-        session.clear();
+        entityManager.flush();
+        entityManager.clear();
 
         Optional<SpecialistAvailableTime> actualSpecialistAvailableTime = specialistAvailableTimeRepository.findById(specialistAvailableTime.getId());
 
         assertThat(actualSpecialistAvailableTime).isPresent();
         assertEquals(specialistAvailableTime, actualSpecialistAvailableTime.get());
-
-        session.getTransaction().rollback();
     }
 
     @Test
     void findAll() {
-        Session session = sessionFactory.getCurrentSession();
-        session.beginTransaction();
-
         User specialist = EntityUtil.getUserSpecialist();
         Address address = EntityUtil.getAddress();
-        session.persist(specialist);
-        session.persist(address);
+        entityManager.persist(specialist);
+        entityManager.persist(address);
         SpecialistAvailableTime specialistAvailableTime = EntityUtil.getSpecialistAvailableTime();
         specialistAvailableTime.setSpecialist(specialist);
         specialistAvailableTime.setAddress(address);
         specialistAvailableTimeRepository.save(specialistAvailableTime);
-        session.flush();
-        session.clear();
+        entityManager.flush();
+        entityManager.clear();
 
         List<SpecialistAvailableTime> actualList = specialistAvailableTimeRepository.findAll();
 
         assertThat(actualList).hasSize(1);
         assertThat(actualList).contains(specialistAvailableTime);
-
-        session.getTransaction().rollback();
     }
 
     @Test
     void update() {
-        Session session = sessionFactory.getCurrentSession();
-        session.beginTransaction();
-
         User specialist = EntityUtil.getUserSpecialist();
         Address address = EntityUtil.getAddress();
-        session.persist(specialist);
-        session.persist(address);
+        entityManager.persist(specialist);
+        entityManager.persist(address);
         SpecialistAvailableTime specialistAvailableTime = EntityUtil.getSpecialistAvailableTime();
         specialistAvailableTime.setSpecialist(specialist);
         specialistAvailableTime.setAddress(address);
         specialistAvailableTimeRepository.save(specialistAvailableTime);
-        session.flush();
-        session.clear();
+        entityManager.flush();
+        entityManager.clear();
         DateAndTime newDateAndTime = new DateAndTime(LocalDateTime.of(2022, 10, 20, 18, 0));
         specialistAvailableTime.setDateAndTime(newDateAndTime);
         specialistAvailableTimeRepository.update(specialistAvailableTime);
-        session.flush();
-        session.clear();
+        entityManager.flush();
+        entityManager.clear();
 
         Optional<SpecialistAvailableTime> actualSpecialistAvailableTime = specialistAvailableTimeRepository.findById(specialistAvailableTime.getId());
 
         assertThat(actualSpecialistAvailableTime).isPresent();
         assertEquals(specialistAvailableTime, actualSpecialistAvailableTime.get());
         assertEquals(newDateAndTime, actualSpecialistAvailableTime.get().getDateAndTime());
-
-        session.getTransaction().rollback();
     }
 
     @Test
     void delete() {
-        Session session = sessionFactory.getCurrentSession();
-        session.beginTransaction();
-
         User specialist = EntityUtil.getUserSpecialist();
         Address address = EntityUtil.getAddress();
-        session.persist(specialist);
-        session.persist(address);
+        entityManager.persist(specialist);
+        entityManager.persist(address);
         SpecialistAvailableTime specialistAvailableTime = EntityUtil.getSpecialistAvailableTime();
         specialistAvailableTime.setSpecialist(specialist);
         specialistAvailableTime.setAddress(address);
         specialistAvailableTimeRepository.save(specialistAvailableTime);
-        session.flush();
-        session.clear();
-        specialistAvailableTimeRepository.delete(specialistAvailableTime);
+        entityManager.flush();
+        entityManager.clear();
 
+        SpecialistAvailableTime savedSpecialistAvailableTime = entityManager.find(SpecialistAvailableTime.class, specialistAvailableTime.getId());
+        specialistAvailableTimeRepository.delete(savedSpecialistAvailableTime);
         Optional<SpecialistAvailableTime> actualSpecialistAvailableTime = specialistAvailableTimeRepository.findById(specialistAvailableTime.getId());
 
         assertThat(actualSpecialistAvailableTime).isNotPresent();
-
-        session.getTransaction().rollback();
     }
 
     @Test
     void findByFilter() {
-        Session session = sessionFactory.getCurrentSession();
-        session.beginTransaction();
-
         User specialist = EntityUtil.getUserSpecialist();
         Address address = EntityUtil.getAddress();
-        session.persist(specialist);
-        session.persist(address);
+        entityManager.persist(specialist);
+        entityManager.persist(address);
         SpecialistAvailableTime specialistAvailableTime1 = SpecialistAvailableTime.builder()
                 .dateAndTime(new DateAndTime(LocalDateTime.of(2022, 10, 25, 12, 0)))
                 .build();
@@ -151,8 +133,8 @@ class SpecialistAvailableTimeRepositoryIT {
         specialistAvailableTime2.setAddress(address);
         specialistAvailableTimeRepository.save(specialistAvailableTime1);
         specialistAvailableTimeRepository.save(specialistAvailableTime2);
-        session.flush();
-        session.clear();
+        entityManager.flush();
+        entityManager.clear();
 
         SpecialistAvailableTimeFilter filter1 = SpecialistAvailableTimeFilter.builder()
                 .dates(List.of(LocalDate.of(2022, 10, 25)))
@@ -171,7 +153,5 @@ class SpecialistAvailableTimeRepositoryIT {
         assertThat(actualList2).hasSize(2);
         assertThat(actualList1).contains(specialistAvailableTime1);
         assertThat(actualList2).contains(specialistAvailableTime1, specialistAvailableTime2);
-
-        session.getTransaction().rollback();
     }
 }

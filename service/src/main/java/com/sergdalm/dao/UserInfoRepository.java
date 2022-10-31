@@ -1,13 +1,14 @@
 package com.sergdalm.dao;
 
 import com.sergdalm.entity.UserInfo;
-import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Repository;
+
+import javax.persistence.EntityManager;
 
 @Repository
 public class UserInfoRepository extends RepositoryBase<UserInfo, Integer> {
 
-    public UserInfoRepository(SessionFactory sessionFactory) {
-        super(UserInfo.class, sessionFactory);
+    public UserInfoRepository(EntityManager entityManager) {
+        super(UserInfo.class, entityManager);
     }
 }

@@ -1,6 +1,5 @@
 package com.sergdalm.entity;
 
-import com.sergdalm.dao.DateAndTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,14 +18,16 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 @Data
-@ToString(exclude = {"client", "specialist", "address", "service", "transaction"})
-@EqualsAndHashCode(exclude = {"client", "specialist", "address", "service", "transaction"})
+@ToString(exclude = {"client", "specialist", "address", "service"})
+@EqualsAndHashCode(exclude = {"id", "client", "specialist", "address", "service"})
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Entity
+@Table(schema = "massage")
 public class Appointment {
 
     @Id

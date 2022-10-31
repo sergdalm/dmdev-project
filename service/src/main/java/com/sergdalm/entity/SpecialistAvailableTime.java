@@ -1,6 +1,5 @@
 package com.sergdalm.entity;
 
-import com.sergdalm.dao.DateAndTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,14 +14,16 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 @Data
 @ToString(exclude = {"specialist", "address"})
-@EqualsAndHashCode(exclude = {"specialist", "address"})
+@EqualsAndHashCode(exclude = {"id", "specialist", "address"})
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Entity
+@Table(schema = "massage")
 public class SpecialistAvailableTime {
 
     @Id

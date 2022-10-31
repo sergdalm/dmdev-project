@@ -1,56 +1,53 @@
 package com.sergdalm.integration.dao;
 
 import com.sergdalm.EntityUtil;
-import com.sergdalm.config.BeanProvider;
 import com.sergdalm.dao.SpecialistServiceRepository;
 import com.sergdalm.entity.Service;
 import com.sergdalm.entity.ServiceName;
 import com.sergdalm.entity.SpecialistService;
 import com.sergdalm.entity.User;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
+import com.sergdalm.entity.UserInfo;
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@SpringBootTest
+@RequiredArgsConstructor
+@Transactional
 class SpecialistServiceRepositoryIT {
 
-    private final SessionFactory sessionFactory = BeanProvider.getSessionFactory();
-    private final SpecialistServiceRepository specialistServiceRepository = BeanProvider.getSpecialistServiceRepository();
+    private final EntityManager entityManager;
+    private final SpecialistServiceRepository specialistServiceRepository;
 
     @Test
     void saveAndFindById() {
-        Session session = sessionFactory.getCurrentSession();
-        session.beginTransaction();
-
         Service service = EntityUtil.getService();
         User specialist = EntityUtil.getUserSpecialist();
-        session.save(service);
-        session.save(specialist);
+        entityManager.persist(service);
+        entityManager.persist(specialist);
         SpecialistService specialistService = EntityUtil.getSpecialistService();
         specialistService.setSpecialist(specialist);
         specialistService.setService(service);
         specialistServiceRepository.save(specialistService);
-        session.flush();
-        session.clear();
+        entityManager.flush();
+        entityManager.clear();
 
         Optional<SpecialistService> actualOptionalSpecialistService = specialistServiceRepository.findById(specialistService.getId());
 
         assertThat(actualOptionalSpecialistService).isPresent();
         assertEquals(specialistService, actualOptionalSpecialistService.get());
-
-        session.getTransaction().rollback();
     }
 
     @Test
     void findAll() {
-        Session session = sessionFactory.getCurrentSession();
-        session.beginTransaction();
-
         Service service1 = EntityUtil.getService();
         Service service2 = Service.builder()
                 .name(ServiceName.HONEY_MASSAGE)
@@ -62,41 +59,36 @@ class SpecialistServiceRepositoryIT {
                 .lengthMin(90)
                 .build();
         User specialist = EntityUtil.getUserSpecialist();
-        session.save(service1);
-        session.save(service2);
-        session.save(specialist);
+        entityManager.persist(service1);
+        entityManager.persist(service2);
+        entityManager.persist(specialist);
         specialistService1.setSpecialist(specialist);
         specialistService2.setSpecialist(specialist);
         specialistService1.setService(service1);
         specialistService2.setService(service2);
-        session.save(specialistService1);
-        session.save(specialistService2);
-        session.flush();
-        session.clear();
+        entityManager.persist(specialistService1);
+        entityManager.persist(specialistService2);
+        entityManager.flush();
+        entityManager.clear();
 
         List<SpecialistService> actualSpecialistServiceList = specialistServiceRepository.findAll();
 
         assertThat(actualSpecialistServiceList).hasSize(2);
         assertThat(actualSpecialistServiceList).contains(specialistService1, specialistService2);
-
-        session.getTransaction().rollback();
     }
 
     @Test
     void update() {
-        Session session = sessionFactory.getCurrentSession();
-        session.beginTransaction();
-
         Service service = EntityUtil.getService();
         User specialist = EntityUtil.getUserSpecialist();
-        session.save(service);
-        session.save(specialist);
+        entityManager.persist(service);
+        entityManager.persist(specialist);
         SpecialistService specialistService = EntityUtil.getSpecialistService();
         specialistService.setSpecialist(specialist);
         specialistService.setService(service);
-        session.save(specialistService);
-        session.flush();
-        session.clear();
+        entityManager.persist(specialistService);
+        entityManager.flush();
+        entityManager.clear();
 
         Integer newPrice = 3000;
         specialistService.setPrice(newPrice);
@@ -106,31 +98,29 @@ class SpecialistServiceRepositoryIT {
         assertThat(actualOptionalSpecialistService).isPresent();
         assertEquals(specialistService, actualOptionalSpecialistService.get());
         assertEquals(newPrice, actualOptionalSpecialistService.get().getPrice());
-
-        session.getTransaction().rollback();
     }
 
     @Test
     void delete() {
-        Session session = sessionFactory.getCurrentSession();
-        session.beginTransaction();
-
         Service service = EntityUtil.getService();
         User specialist = EntityUtil.getUserSpecialist();
-        session.save(service);
-        session.save(specialist);
+        UserInfo userInfo = EntityUtil.getSpecialistUserInfo();
+        entityManager.persist(service);
+        entityManager.persist(specialist);
+        userInfo.setUser(specialist);
+        entityManager.persist(userInfo);
         SpecialistService specialistService = EntityUtil.getSpecialistService();
         specialistService.setSpecialist(specialist);
         specialistService.setService(service);
-        session.save(specialistService);
-        session.flush();
-        session.clear();
+        entityManager.persist(specialistService);
+        entityManager.flush();
+        entityManager.clear();
+        SpecialistService savedSpecialistService = entityManager.find(SpecialistService.class, specialistService.getId());
 
-        specialistServiceRepository.delete(specialistService);
-        Optional<SpecialistService> actualOptionalSpecialistService = specialistServiceRepository.findById(specialistService.getId());
+        specialistServiceRepository.delete(savedSpecialistService);
+        Optional<SpecialistService> actualOptionalSpecialistService = specialistServiceRepository
+                .findById(specialistService.getId());
 
         assertThat(actualOptionalSpecialistService).isNotPresent();
-
-        session.getTransaction().rollback();
     }
 }

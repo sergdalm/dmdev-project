@@ -10,10 +10,9 @@ import com.sergdalm.entity.SpecialistService;
 import com.sergdalm.entity.SpecialistService_;
 import com.sergdalm.entity.User;
 import com.sergdalm.entity.User_;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Repository;
 
+import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
@@ -27,13 +26,12 @@ import static com.sergdalm.entity.QUser.user;
 @Repository
 public class UserRepository extends RepositoryBase<User, Integer> {
 
-    public UserRepository(SessionFactory sessionFactory) {
-        super(User.class, sessionFactory);
+    public UserRepository(EntityManager entityManager) {
+        super(User.class, entityManager);
     }
 
     public List<User> getUsersByMassageType(List<ServiceName> serviceNames) {
-        Session session = super.getSessionFactory().getCurrentSession();
-        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaBuilder cb = super.getEntityManager().getCriteriaBuilder();
         CriteriaQuery<User> criteria = cb.createQuery(User.class);
         Root<User> user = criteria.from(User.class);
         ListJoin<User, SpecialistService> specialistService = user.join(User_.specialistServices);
@@ -44,13 +42,12 @@ public class UserRepository extends RepositoryBase<User, Integer> {
                         .in(serviceNames))
                 .groupBy(user.get(User_.id));
 
-        return session.createQuery(criteria)
-                .list();
+        return super.getEntityManager().createQuery(criteria)
+                .getResultList();
     }
 
     public List<Tuple> findClientsWithAmountWhoDidNotPaid() {
-        Session session = super.getSessionFactory().getCurrentSession();
-        return new JPAQuery<Tuple>(session)
+        return new JPAQuery<Tuple>(super.getEntityManager())
                 .select(user, appointment.price.sum())
                 .from(user)
                 .join(user.clientAppointments, appointment)

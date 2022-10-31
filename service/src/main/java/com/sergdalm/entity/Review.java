@@ -14,15 +14,17 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import java.time.LocalDateTime;
 
 @Data
 @ToString(exclude = {"specialist", "client"})
-@EqualsAndHashCode(exclude = {"specialist", "client"})
+@EqualsAndHashCode(exclude = {"id", "specialist", "client"})
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Entity
+@Table(schema = "massage")
 public class Review {
 
     @Id

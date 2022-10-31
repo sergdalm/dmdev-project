@@ -1,13 +1,14 @@
 package com.sergdalm.dao;
 
 import com.sergdalm.entity.Address;
-import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Repository;
+
+import javax.persistence.EntityManager;
 
 @Repository
 public class AddressRepository extends RepositoryBase<Address, Integer> {
 
-    public AddressRepository(SessionFactory sessionFactory) {
-        super(Address.class, sessionFactory);
+    public AddressRepository(EntityManager entityManager) {
+        super(Address.class, entityManager);
     }
 }

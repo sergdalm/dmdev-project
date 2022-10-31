@@ -1,13 +1,14 @@
 package com.sergdalm.dao;
 
 import com.sergdalm.entity.SpecialistService;
-import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Repository;
+
+import javax.persistence.EntityManager;
 
 @Repository
 public class SpecialistServiceRepository extends RepositoryBase<SpecialistService, Integer> {
 
-    public SpecialistServiceRepository(SessionFactory sessionFactory) {
-        super(SpecialistService.class, sessionFactory);
+    public SpecialistServiceRepository(EntityManager entityManager) {
+        super(SpecialistService.class, entityManager);
     }
 }

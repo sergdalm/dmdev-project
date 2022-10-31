@@ -1,59 +1,59 @@
 package com.sergdalm.dao;
 
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
+import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaQuery;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 public abstract class RepositoryBase<E, T extends Serializable> implements Repository<E, T> {
 
     private final Class<E> clazz;
-    private final SessionFactory sessionFactory;
 
-    public RepositoryBase(Class<E> clazz, SessionFactory sessionFactory) {
+    @Getter(AccessLevel.PROTECTED)
+    private final EntityManager entityManager;
+
+    public RepositoryBase(Class<E> clazz, EntityManager entityManager) {
         this.clazz = clazz;
-        this.sessionFactory = sessionFactory;
+        this.entityManager = entityManager;
     }
 
     @Override
     public E save(E entity) {
-        Session session = sessionFactory.getCurrentSession();
-        session.persist(entity);
+        entityManager.persist(entity);
         return entity;
     }
 
     @Override
     public Optional<E> findById(T id) {
-        return Optional.ofNullable(sessionFactory.getCurrentSession().find(clazz, id));
+        return Optional.ofNullable(entityManager.find(clazz, id));
     }
 
     @Override
     public List<E> findAll() {
-        Session session = sessionFactory.getCurrentSession();
-        CriteriaQuery<E> criteria = session.getCriteriaBuilder()
+        CriteriaQuery<E> criteria = entityManager.getCriteriaBuilder()
                 .createQuery(clazz);
         criteria.from(clazz);
-        return session.createQuery(criteria)
+        return entityManager.createQuery(criteria)
                 .getResultList();
     }
 
     @Override
     public void delete(E entity) {
-        Session session = sessionFactory.getCurrentSession();
-        session.remove(entity);
-        session.flush();
+        log.info("START DELETING");
+        entityManager.remove(entity);
+        log.info("DELETED");
+        entityManager.flush();
+        log.info("FLUSHED");
     }
 
     @Override
     public void update(E entity) {
-        Session session = sessionFactory.getCurrentSession();
-        session.merge(entity);
-    }
-
-    protected SessionFactory getSessionFactory() {
-        return sessionFactory;
+        entityManager.merge(entity);
     }
 }

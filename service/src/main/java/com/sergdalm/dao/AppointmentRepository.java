@@ -5,10 +5,9 @@ import com.querydsl.jpa.impl.JPAQuery;
 import com.sergdalm.entity.Appointment;
 import com.sergdalm.entity.AppointmentStatus;
 import com.sergdalm.filter.QPredicate;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Repository;
 
+import javax.persistence.EntityManager;
 import java.util.List;
 
 import static com.sergdalm.entity.QAppointment.appointment;
@@ -16,16 +15,15 @@ import static com.sergdalm.entity.QAppointment.appointment;
 @Repository
 public class AppointmentRepository extends RepositoryBase<Appointment, Integer> {
 
-    public AppointmentRepository(SessionFactory sessionFactory) {
-        super(Appointment.class, sessionFactory);
+    public AppointmentRepository(EntityManager entityManager) {
+        super(Appointment.class, entityManager);
     }
 
     public List<Appointment> findByStatus(List<AppointmentStatus> statuses) {
-        Session session = super.getSessionFactory().getCurrentSession();
         Predicate predicate = QPredicate.builder()
                 .add(statuses, appointment.status::in)
                 .buildAnd();
-        return new JPAQuery<Appointment>(session)
+        return new JPAQuery<Appointment>(super.getEntityManager())
                 .select(appointment)
                 .from(appointment)
                 .where(predicate)

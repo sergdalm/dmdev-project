@@ -16,16 +16,18 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
 
 @Data
 @ToString(exclude = {"specialist", "service", "sales"})
-@EqualsAndHashCode(exclude = {"specialist", "service", "sales"})
+@EqualsAndHashCode(exclude = {"id", "specialist", "service", "sales"})
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Entity
+@Table(schema = "massage")
 public class SpecialistService {
 
     @Id

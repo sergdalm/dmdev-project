@@ -1,9 +1,9 @@
 package com.sergdalm;
 
-import com.sergdalm.dao.DateAndTime;
 import com.sergdalm.entity.Address;
 import com.sergdalm.entity.Appointment;
 import com.sergdalm.entity.AppointmentStatus;
+import com.sergdalm.entity.DateAndTime;
 import com.sergdalm.entity.Gender;
 import com.sergdalm.entity.Review;
 import com.sergdalm.entity.Role;
@@ -27,6 +27,7 @@ public class EntityUtil {
                 .email("admin@mail.com")
                 .password("1djh2l")
                 .mobilePhoneNumber("+7(911)123-45-67")
+                .role(Role.ADMINISTRATOR)
                 .build();
     }
 
@@ -35,7 +36,6 @@ public class EntityUtil {
                 .firstName("Alex")
                 .lastName("S")
                 .gender(Gender.FEMALE)
-                .role(Role.ADMINISTRATOR)
                 .birthday(LocalDate.of(1993, 7, 12))
                 .gender(Gender.FEMALE)
                 .registeredAt(LocalDateTime.now())
@@ -47,12 +47,13 @@ public class EntityUtil {
                 .email("client@mail.com")
                 .mobilePhoneNumber("+7(911)545-78-22")
                 .password("dn38d")
+                .role(Role.CLIENT)
                 .build();
     }
 
     public static UserInfo getClientUserInfo() {
         return UserInfo.builder()
-                .role(Role.CLIENT)
+
                 .firstName("Svetlana")
                 .lastName("Petrova")
                 .gender(Gender.FEMALE)
@@ -67,12 +68,12 @@ public class EntityUtil {
                 .email("dmitry@mail.com")
                 .mobilePhoneNumber("+7(911)222-34-55")
                 .password("39239")
+                .role(Role.SPECIALIST)
                 .build();
     }
 
     public static UserInfo getSpecialistUserInfo() {
         return UserInfo.builder()
-                .role(Role.SPECIALIST)
                 .firstName("Dmitry")
                 .lastName("Cheremuhin")
                 .gender(Gender.FEMALE)

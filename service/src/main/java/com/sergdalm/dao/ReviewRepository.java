@@ -1,13 +1,14 @@
 package com.sergdalm.dao;
 
 import com.sergdalm.entity.Review;
-import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Repository;
+
+import javax.persistence.EntityManager;
 
 @Repository
 public class ReviewRepository extends RepositoryBase<Review, Integer> {
 
-    public ReviewRepository(SessionFactory sessionFactory) {
-        super(Review.class, sessionFactory);
+    public ReviewRepository(EntityManager entityManager) {
+        super(Review.class, entityManager);
     }
 }

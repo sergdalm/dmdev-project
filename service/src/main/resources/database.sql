@@ -1,5 +1,3 @@
-CREATE DATABASE massage_project;
-
 CREATE SCHEMA massage;
 
 SET search_path TO massage;
@@ -9,6 +7,7 @@ CREATE TABLE users
     id                  SERIAL PRIMARY KEY,
     email               VARCHAR(128) UNIQUE NOT NULL,
     mobile_phone_number VARCHAR(64) UNIQUE  NOT NULL,
+    role                VARCHAR(32)         NOT NULL,
     password            VARCHAR(128)        NOT NULL
 );
 
@@ -16,7 +15,6 @@ CREATE TABLE users
 CREATE TABLE user_info
 (
     user_id       INT PRIMARY KEY REFERENCES users (id),
-    role          VARCHAR(32)  NOT NULL,
     first_name    VARCHAR(128) NOT NULL,
     last_name     VARCHAR(128) NOT NULL,
     gender        VARCHAR(32)  NOT NULL,
@@ -45,14 +43,14 @@ CREATE TABLE specialist_service
 
 CREATE TABLE address
 (
-    id          SERIAL PRIMARY KEY,
-    address     VARCHAR(128) UNIQUE NOT NULL,
-    description VARCHAR(256)        NOT NULL
+    id           SERIAL PRIMARY KEY,
+    address_name VARCHAR(128) UNIQUE NOT NULL,
+    description  VARCHAR(256)        NOT NULL
 );
-
 
 CREATE TABLE specialist_available_time
 (
+    id            SERIAL PRIMARY KEY,
     specialist_id INT REFERENCES users (id) ON DELETE CASCADE   NOT NULL,
     address_id    INT REFERENCES address (id) ON DELETE CASCADE NOT NULL,
     date          DATE                                          NOT NULL,
@@ -70,9 +68,8 @@ CREATE TABLE appointment
     date          DATE                                          NOT NULL,
     start_time    TIME                                          NOT NULL,
     length_min    INT                                           NOT NULL,
-    prise         INT                                           NOT NULL,
-    status        VARCHAR(32)                                   NOT NULL,
     price         INT                                           NOT NULL,
+    status        VARCHAR(32)                                   NOT NULL,
     UNIQUE (specialist_id, date, start_time)
 );
 
@@ -90,7 +87,7 @@ CREATE TABLE service_sale
     id                    SERIAL PRIMARY KEY,
     specialist_service_id INT REFERENCES specialist_service (id) ON DELETE CASCADE NOT NULL,
     address_id            INT REFERENCES address (id) ON DELETE CASCADE            NOT NULL,
-    start_day             DATE                                                     NOT NULL,
+    start_date            DATE                                                     NOT NULL,
     duration_days         INT                                                      NOT NULL,
     sale_price            INT                                                      NOT NULL
 );

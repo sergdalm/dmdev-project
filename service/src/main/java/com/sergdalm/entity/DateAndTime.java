@@ -1,4 +1,4 @@
-package com.sergdalm.dao;
+package com.sergdalm.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
