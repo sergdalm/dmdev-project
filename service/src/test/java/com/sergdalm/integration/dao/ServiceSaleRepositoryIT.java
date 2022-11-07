@@ -7,10 +7,9 @@ import com.sergdalm.entity.Service;
 import com.sergdalm.entity.ServiceSale;
 import com.sergdalm.entity.SpecialistService;
 import com.sergdalm.entity.User;
+import com.sergdalm.integration.IntegrationTestBase;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import java.util.List;
@@ -19,10 +18,8 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@SpringBootTest
 @RequiredArgsConstructor
-@Transactional
-class ServiceSaleRepositoryIT {
+class ServiceSaleRepositoryIT extends IntegrationTestBase {
 
     private final EntityManager entityManager;
     private final ServiceSaleRepository serviceSaleRepository;
@@ -126,7 +123,7 @@ class ServiceSaleRepositoryIT {
 
         Integer newPrice = 2000;
         serviceSale.setSalePrice(newPrice);
-        serviceSaleRepository.update(serviceSale);
+        serviceSaleRepository.save(serviceSale);
         entityManager.flush();
         entityManager.clear();
         Optional<ServiceSale> actualOptionServiceSale = serviceSaleRepository.findById(serviceSale.getId());

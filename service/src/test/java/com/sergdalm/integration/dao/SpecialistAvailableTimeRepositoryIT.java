@@ -7,10 +7,9 @@ import com.sergdalm.entity.DateAndTime;
 import com.sergdalm.entity.SpecialistAvailableTime;
 import com.sergdalm.entity.User;
 import com.sergdalm.filter.SpecialistAvailableTimeFilter;
+import com.sergdalm.integration.IntegrationTestBase;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import java.time.LocalDate;
@@ -23,10 +22,8 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@SpringBootTest
 @RequiredArgsConstructor
-@Transactional
-class SpecialistAvailableTimeRepositoryIT {
+class SpecialistAvailableTimeRepositoryIT extends IntegrationTestBase {
 
     private final EntityManager entityManager;
     private final SpecialistAvailableTimeRepository specialistAvailableTimeRepository;
@@ -83,7 +80,7 @@ class SpecialistAvailableTimeRepositoryIT {
         entityManager.clear();
         DateAndTime newDateAndTime = new DateAndTime(LocalDateTime.of(2022, 10, 20, 18, 0));
         specialistAvailableTime.setDateAndTime(newDateAndTime);
-        specialistAvailableTimeRepository.update(specialistAvailableTime);
+        specialistAvailableTimeRepository.save(specialistAvailableTime);
         entityManager.flush();
         entityManager.clear();
 
@@ -146,8 +143,8 @@ class SpecialistAvailableTimeRepositoryIT {
                 .dates(Collections.emptyList())
                 .build();
 
-        List<SpecialistAvailableTime> actualList1 = specialistAvailableTimeRepository.findByFilter(filter1);
-        List<SpecialistAvailableTime> actualList2 = specialistAvailableTimeRepository.findByFilter(filter2);
+        List<SpecialistAvailableTime> actualList1 = specialistAvailableTimeRepository.findByFilter(filter1, entityManager);
+        List<SpecialistAvailableTime> actualList2 = specialistAvailableTimeRepository.findByFilter(filter2, entityManager);
 
         assertThat(actualList1).hasSize(1);
         assertThat(actualList2).hasSize(2);

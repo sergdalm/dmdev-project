@@ -1,8 +1,15 @@
-CREATE SCHEMA massage;
+--liquibase formatted sql
+
+--changeset asergienko:1
+SELECT 'CREATE DATABASE massage_project'
+WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'massage_project');
+
+CREATE SCHEMA IF NOT EXISTS massage;
 
 SET search_path TO massage;
 
-CREATE TABLE users
+--changeset asergienko:2
+CREATE TABLE massage.users
 (
     id                  SERIAL PRIMARY KEY,
     email               VARCHAR(128) UNIQUE NOT NULL,
@@ -10,9 +17,10 @@ CREATE TABLE users
     role                VARCHAR(32)         NOT NULL,
     password            VARCHAR(128)        NOT NULL
 );
+--rollback DROP TABLE massage.users;
 
-
-CREATE TABLE user_info
+--changeset asergienko:3
+CREATE TABLE massage.user_info
 (
     user_id       INT PRIMARY KEY REFERENCES users (id),
     first_name    VARCHAR(128) NOT NULL,
@@ -22,15 +30,19 @@ CREATE TABLE user_info
     registered_at TIMESTAMP    NOT NULL,
     description   VARCHAR(256)
 );
+--rollback DROP TABLE massage.user_info;
 
-CREATE TABLE service
+--changeset asergienko:4
+CREATE TABLE massage.service
 (
     id          SERIAL PRIMARY KEY,
     name        VARCHAR(128) UNIQUE NOT NULL,
     description VARCHAR(256)        NOT NULL
 );
+--rollback DROP TABLE massage.service;
 
-CREATE TABLE specialist_service
+--changeset asergienko:5
+CREATE TABLE massage.specialist_service
 (
     id            SERIAL PRIMARY KEY,
     specialist_id INT REFERENCES users (id) ON DELETE CASCADE   NOT NULL,
@@ -39,16 +51,19 @@ CREATE TABLE specialist_service
     price         INT                                           NOT NULL,
     UNIQUE (specialist_id, service_id, length_min)
 );
+--rollback DROP TABLE massage.specialist_service;
 
-
-CREATE TABLE address
+--changeset asergienko:6
+CREATE TABLE massage.address
 (
     id           SERIAL PRIMARY KEY,
     address_name VARCHAR(128) UNIQUE NOT NULL,
     description  VARCHAR(256)        NOT NULL
 );
+--rollback DROP TABLE massage.address;
 
-CREATE TABLE specialist_available_time
+--changeset asergienko:7
+CREATE TABLE massage.specialist_available_time
 (
     id            SERIAL PRIMARY KEY,
     specialist_id INT REFERENCES users (id) ON DELETE CASCADE   NOT NULL,
@@ -57,8 +72,10 @@ CREATE TABLE specialist_available_time
     time          TIME                                          NOT NULL,
     UNIQUE (specialist_id, address_id, date, time)
 );
+--rollback DROP TABLE massage.specialist_available_time;
 
-CREATE TABLE appointment
+--changeset asergienko:8
+CREATE TABLE massage.appointment
 (
     id            SERIAL PRIMARY KEY,
     client_id     INT REFERENCES users (id) ON DELETE CASCADE   NOT NULL,
@@ -72,8 +89,10 @@ CREATE TABLE appointment
     status        VARCHAR(32)                                   NOT NULL,
     UNIQUE (specialist_id, date, start_time)
 );
+--rollback DROP TABLE massage.appointment;
 
-CREATE TABLE review
+--changeset asergienko:9
+CREATE TABLE massage.review
 (
     id            SERIAL PRIMARY KEY,
     specialist_id INT REFERENCES users (id) ON DELETE CASCADE NOT NULL,
@@ -81,8 +100,10 @@ CREATE TABLE review
     published_at  TIMESTAMP                                   NOT NULL,
     content       VARCHAR(256)                                NOT NULL
 );
+--rollback DROP TABLE massage.review;
 
-CREATE TABLE service_sale
+--changeset asergienko:10
+CREATE TABLE massage.service_sale
 (
     id                    SERIAL PRIMARY KEY,
     specialist_service_id INT REFERENCES specialist_service (id) ON DELETE CASCADE NOT NULL,
@@ -91,3 +112,4 @@ CREATE TABLE service_sale
     duration_days         INT                                                      NOT NULL,
     sale_price            INT                                                      NOT NULL
 );
+--rollback DROP TABLE massage.service_sale;

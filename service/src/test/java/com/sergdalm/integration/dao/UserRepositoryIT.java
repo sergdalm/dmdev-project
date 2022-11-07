@@ -11,10 +11,9 @@ import com.sergdalm.entity.Service;
 import com.sergdalm.entity.ServiceName;
 import com.sergdalm.entity.SpecialistService;
 import com.sergdalm.entity.User;
+import com.sergdalm.integration.IntegrationTestBase;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import java.time.LocalDateTime;
@@ -24,10 +23,8 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@SpringBootTest
 @RequiredArgsConstructor
-@Transactional
-class UserRepositoryIT {
+class UserRepositoryIT extends IntegrationTestBase {
 
     private final EntityManager entityManager;
     private final UserRepository userRepository;
@@ -70,7 +67,7 @@ class UserRepositoryIT {
 
         String newNumber = "+7(911)475-76-13";
         user.setMobilePhoneNumber(newNumber);
-        userRepository.update(user);
+        userRepository.save(user);
         entityManager.flush();
         entityManager.clear();
         Optional<User> actualOptionalUser = userRepository.findById(user.getId());
@@ -109,7 +106,7 @@ class UserRepositoryIT {
         entityManager.persist(specialistService);
 
         List<ServiceName> services = List.of(ServiceName.LYMPHATIC_DRAINAGE_MASSAGE);
-        List<User> actualUsers = userRepository.getUsersByMassageType(services);
+        List<User> actualUsers = userRepository.getUsersByMassageType(services, entityManager);
 
         assertThat(actualUsers).hasSize(1);
         assertThat(actualUsers).contains(specialist);
@@ -140,7 +137,7 @@ class UserRepositoryIT {
         appointment.setService(service);
         entityManager.persist(appointment);
 
-        List<Tuple> actualUserAndAmountList = userRepository.findClientsWithAmountWhoDidNotPaid();
+        List<Tuple> actualUserAndAmountList = userRepository.findClientsWithAmountWhoDidNotPaid(entityManager);
 
         List<User> actualUserList = actualUserAndAmountList.stream()
                 .map(it -> it.get(0, User.class))

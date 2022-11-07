@@ -3,10 +3,9 @@ package com.sergdalm.integration.dao;
 import com.sergdalm.EntityUtil;
 import com.sergdalm.dao.AddressRepository;
 import com.sergdalm.entity.Address;
+import com.sergdalm.integration.IntegrationTestBase;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import java.util.List;
@@ -15,10 +14,8 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@SpringBootTest
 @RequiredArgsConstructor
-@Transactional
-class AddressRepositoryIT {
+class AddressRepositoryIT extends IntegrationTestBase {
 
     private final EntityManager entityManager;
     private final AddressRepository addressRepository;
@@ -81,7 +78,7 @@ class AddressRepositoryIT {
 
         String newDescription = "Nearby subway Gostinny drov, go to the right";
         address.setDescription(newDescription);
-        addressRepository.update(address);
+        addressRepository.save(address);
         entityManager.flush();
         entityManager.clear();
         Optional<Address> actualOptionalAddress = addressRepository.findById(address.getId());

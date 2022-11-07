@@ -7,10 +7,9 @@ import com.sergdalm.entity.ServiceName;
 import com.sergdalm.entity.SpecialistService;
 import com.sergdalm.entity.User;
 import com.sergdalm.entity.UserInfo;
+import com.sergdalm.integration.IntegrationTestBase;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import java.util.List;
@@ -19,10 +18,8 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@SpringBootTest
 @RequiredArgsConstructor
-@Transactional
-class SpecialistServiceRepositoryIT {
+class SpecialistServiceRepositoryIT extends IntegrationTestBase {
 
     private final EntityManager entityManager;
     private final SpecialistServiceRepository specialistServiceRepository;
@@ -92,7 +89,7 @@ class SpecialistServiceRepositoryIT {
 
         Integer newPrice = 3000;
         specialistService.setPrice(newPrice);
-        specialistServiceRepository.update(specialistService);
+        specialistServiceRepository.save(specialistService);
         Optional<SpecialistService> actualOptionalSpecialistService = specialistServiceRepository.findById(specialistService.getId());
 
         assertThat(actualOptionalSpecialistService).isPresent();

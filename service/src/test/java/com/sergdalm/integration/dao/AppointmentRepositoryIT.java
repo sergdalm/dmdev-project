@@ -8,10 +8,9 @@ import com.sergdalm.entity.AppointmentStatus;
 import com.sergdalm.entity.DateAndTime;
 import com.sergdalm.entity.Service;
 import com.sergdalm.entity.User;
+import com.sergdalm.integration.IntegrationTestBase;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import java.time.LocalDateTime;
@@ -21,10 +20,8 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@SpringBootTest
 @RequiredArgsConstructor
-@Transactional
-class AppointmentRepositoryIT {
+class AppointmentRepositoryIT extends IntegrationTestBase {
 
     private final EntityManager entityManager;
     private final AppointmentRepository appointmentRepository;
@@ -114,7 +111,7 @@ class AppointmentRepositoryIT {
 
         Integer newPrice = 2500;
         appointment.setPrice(newPrice);
-        appointmentRepository.update(appointment);
+        appointmentRepository.save(appointment);
         entityManager.flush();
         entityManager.clear();
         Optional<Appointment> actualOptionalAppointment = appointmentRepository.findById(appointment.getId());
@@ -178,7 +175,7 @@ class AppointmentRepositoryIT {
         List<AppointmentStatus> statuses = List.of(
                 AppointmentStatus.COMPLETED_NOT_PAID);
 
-        List<Appointment> actualAppointmentList = appointmentRepository.findByStatus(statuses);
+        List<Appointment> actualAppointmentList = appointmentRepository.findByStatus(statuses, entityManager);
 
         assertThat(actualAppointmentList).hasSize(1);
         assertThat(actualAppointmentList).contains(appointmentNotPaid);

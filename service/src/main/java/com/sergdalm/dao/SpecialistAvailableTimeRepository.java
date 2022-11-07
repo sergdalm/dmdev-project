@@ -6,6 +6,7 @@ import com.querydsl.jpa.impl.JPAQuery;
 import com.sergdalm.entity.SpecialistAvailableTime;
 import com.sergdalm.filter.QPredicate;
 import com.sergdalm.filter.SpecialistAvailableTimeFilter;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -15,13 +16,9 @@ import static com.sergdalm.entity.QSpecialistAvailableTime.specialistAvailableTi
 import static com.sergdalm.entity.QUser.user;
 
 @Repository
-public class SpecialistAvailableTimeRepository extends RepositoryBase<SpecialistAvailableTime, Integer> {
+public interface SpecialistAvailableTimeRepository extends JpaRepository<SpecialistAvailableTime, Integer> {
 
-    public SpecialistAvailableTimeRepository(EntityManager entityManager) {
-        super(SpecialistAvailableTime.class, entityManager);
-    }
-
-    public List<SpecialistAvailableTime> findByFilter(SpecialistAvailableTimeFilter filter) {
+    default List<SpecialistAvailableTime> findByFilter(SpecialistAvailableTimeFilter filter, EntityManager entityManager) {
         Predicate predicate = QPredicate.builder()
                 .add(filter.getSpecialistId(), user.id::eq)
                 .add(filter.getAddressId(), specialistAvailableTime.address.id::eq)
@@ -29,7 +26,7 @@ public class SpecialistAvailableTimeRepository extends RepositoryBase<Specialist
                 .add(filter.getTimes(), specialistAvailableTime.dateAndTime.time::in)
                 .buildAnd();
 
-        return new JPAQuery<Tuple>(super.getEntityManager())
+        return new JPAQuery<Tuple>(entityManager)
                 .select(specialistAvailableTime)
                 .from(user)
                 .join(user.specialistAvailableTimes, specialistAvailableTime)

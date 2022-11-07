@@ -14,7 +14,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import javax.persistence.Table;
 
 @Data
 @ToString(exclude = {"specialist", "address"})
@@ -23,7 +22,6 @@ import javax.persistence.Table;
 @NoArgsConstructor
 @Builder
 @Entity
-@Table(schema = "massage")
 public class SpecialistAvailableTime {
 
     @Id

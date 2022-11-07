@@ -1,14 +1,9 @@
 package com.sergdalm.dao;
 
 import com.sergdalm.entity.Address;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.EntityManager;
-
 @Repository
-public class AddressRepository extends RepositoryBase<Address, Integer> {
-
-    public AddressRepository(EntityManager entityManager) {
-        super(Address.class, entityManager);
-    }
+public interface AddressRepository extends JpaRepository<Address, Integer> {
 }

@@ -10,6 +10,7 @@ import com.sergdalm.entity.SpecialistService;
 import com.sergdalm.entity.SpecialistService_;
 import com.sergdalm.entity.User;
 import com.sergdalm.entity.User_;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -24,14 +25,10 @@ import static com.sergdalm.entity.QAppointment.appointment;
 import static com.sergdalm.entity.QUser.user;
 
 @Repository
-public class UserRepository extends RepositoryBase<User, Integer> {
+public interface UserRepository extends JpaRepository<User, Integer> {
 
-    public UserRepository(EntityManager entityManager) {
-        super(User.class, entityManager);
-    }
-
-    public List<User> getUsersByMassageType(List<ServiceName> serviceNames) {
-        CriteriaBuilder cb = super.getEntityManager().getCriteriaBuilder();
+    default List<User> getUsersByMassageType(List<ServiceName> serviceNames, EntityManager entityManager) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<User> criteria = cb.createQuery(User.class);
         Root<User> user = criteria.from(User.class);
         ListJoin<User, SpecialistService> specialistService = user.join(User_.specialistServices);
@@ -42,12 +39,12 @@ public class UserRepository extends RepositoryBase<User, Integer> {
                         .in(serviceNames))
                 .groupBy(user.get(User_.id));
 
-        return super.getEntityManager().createQuery(criteria)
+        return entityManager.createQuery(criteria)
                 .getResultList();
     }
 
-    public List<Tuple> findClientsWithAmountWhoDidNotPaid() {
-        return new JPAQuery<Tuple>(super.getEntityManager())
+    default List<Tuple> findClientsWithAmountWhoDidNotPaid(EntityManager entityManager) {
+        return new JPAQuery<Tuple>(entityManager)
                 .select(user, appointment.price.sum())
                 .from(user)
                 .join(user.clientAppointments, appointment)

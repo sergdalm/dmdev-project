@@ -3,10 +3,9 @@ package com.sergdalm.integration.dao;
 import com.sergdalm.EntityUtil;
 import com.sergdalm.dao.ServiceRepository;
 import com.sergdalm.entity.Service;
+import com.sergdalm.integration.IntegrationTestBase;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import java.util.List;
@@ -15,10 +14,8 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@SpringBootTest
 @RequiredArgsConstructor
-@Transactional
-class ServiceRepositoryIT {
+class ServiceRepositoryIT extends IntegrationTestBase {
 
     private final EntityManager entityManager;
     private final ServiceRepository serviceRepository;
@@ -57,7 +54,7 @@ class ServiceRepositoryIT {
         entityManager.clear();
         String newDescription = "Very good for health";
         service.setDescription(newDescription);
-        serviceRepository.update(service);
+        serviceRepository.save(service);
         entityManager.flush();
         entityManager.clear();
 

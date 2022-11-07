@@ -4,10 +4,9 @@ import com.sergdalm.EntityUtil;
 import com.sergdalm.dao.ReviewRepository;
 import com.sergdalm.entity.Review;
 import com.sergdalm.entity.User;
+import com.sergdalm.integration.IntegrationTestBase;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import java.util.List;
@@ -16,10 +15,8 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@SpringBootTest
 @RequiredArgsConstructor
-@Transactional
-class ReviewRepositoryIT {
+class ReviewRepositoryIT extends IntegrationTestBase {
 
     private final EntityManager entityManager;
     private final ReviewRepository reviewRepository;
@@ -60,7 +57,7 @@ class ReviewRepositoryIT {
 
         String newContent = "Great!";
         review.setContent(newContent);
-        reviewRepository.update(review);
+        reviewRepository.save(review);
         entityManager.flush();
         entityManager.clear();
         Optional<Review> actualOptionalUpdatedReview = reviewRepository.findById(review.getId());
