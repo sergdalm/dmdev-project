@@ -28,7 +28,6 @@
         <lombok.version>1.18.24</lombok.version>
         <postgresql.version>42.5.0</postgresql.version>
         <commons-collections4.version>4.4</commons-collections4.version>
-        <liquibase-core.version>4.17.2</liquibase-core.version>
         <testcontainers.postgresql.version>1.17.5</testcontainers.postgresql.version>
         <maven-resources-plugin.version>3.3.0</maven-resources-plugin.version>
         <querydsl-maven-plugin.version>5.0.0</querydsl-maven-plugin.version>
@@ -63,12 +62,6 @@
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-collections4</artifactId>
                 <version>${commons-collections4.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.liquibase</groupId>
-                <artifactId>liquibase-core</artifactId>
-                <version>${liquibase-core.version}</version>
             </dependency>
 
             <!-- querydsl jpa requires this dependency -->
