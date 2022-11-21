@@ -2,18 +2,16 @@ package com.sergdalm.integration.dao;
 
 import com.sergdalm.EntityUtil;
 import com.sergdalm.dao.SpecialistAvailableTimeRepository;
+import com.sergdalm.dao.filter.SpecialistAvailableTimeFilter;
 import com.sergdalm.entity.Address;
-import com.sergdalm.entity.DateAndTime;
 import com.sergdalm.entity.SpecialistAvailableTime;
 import com.sergdalm.entity.User;
-import com.sergdalm.filter.SpecialistAvailableTimeFilter;
 import com.sergdalm.integration.IntegrationTestBase;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 
 import javax.persistence.EntityManager;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Collections;
 import java.util.List;
@@ -30,8 +28,8 @@ class SpecialistAvailableTimeRepositoryIT extends IntegrationTestBase {
 
     @Test
     void findById() {
-        User specialist = EntityUtil.getUserSpecialist();
-        Address address = EntityUtil.getAddress();
+        User specialist = EntityUtil.getSpecialistDmitry();
+        Address address = EntityUtil.getAddressNarvskaya();
         entityManager.persist(specialist);
         entityManager.persist(address);
         SpecialistAvailableTime specialistAvailableTime = EntityUtil.getSpecialistAvailableTime();
@@ -49,8 +47,8 @@ class SpecialistAvailableTimeRepositoryIT extends IntegrationTestBase {
 
     @Test
     void findAll() {
-        User specialist = EntityUtil.getUserSpecialist();
-        Address address = EntityUtil.getAddress();
+        User specialist = EntityUtil.getSpecialistDmitry();
+        Address address = EntityUtil.getAddressNarvskaya();
         entityManager.persist(specialist);
         entityManager.persist(address);
         SpecialistAvailableTime specialistAvailableTime = EntityUtil.getSpecialistAvailableTime();
@@ -68,8 +66,8 @@ class SpecialistAvailableTimeRepositoryIT extends IntegrationTestBase {
 
     @Test
     void update() {
-        User specialist = EntityUtil.getUserSpecialist();
-        Address address = EntityUtil.getAddress();
+        User specialist = EntityUtil.getSpecialistDmitry();
+        Address address = EntityUtil.getAddressNarvskaya();
         entityManager.persist(specialist);
         entityManager.persist(address);
         SpecialistAvailableTime specialistAvailableTime = EntityUtil.getSpecialistAvailableTime();
@@ -78,8 +76,8 @@ class SpecialistAvailableTimeRepositoryIT extends IntegrationTestBase {
         specialistAvailableTimeRepository.save(specialistAvailableTime);
         entityManager.flush();
         entityManager.clear();
-        DateAndTime newDateAndTime = new DateAndTime(LocalDateTime.of(2022, 10, 20, 18, 0));
-        specialistAvailableTime.setDateAndTime(newDateAndTime);
+        specialistAvailableTime.setDate(LocalDate.of(2022, 10, 20));
+        specialistAvailableTime.setTime(LocalTime.of(18, 0));
         specialistAvailableTimeRepository.save(specialistAvailableTime);
         entityManager.flush();
         entityManager.clear();
@@ -88,13 +86,14 @@ class SpecialistAvailableTimeRepositoryIT extends IntegrationTestBase {
 
         assertThat(actualSpecialistAvailableTime).isPresent();
         assertEquals(specialistAvailableTime, actualSpecialistAvailableTime.get());
-        assertEquals(newDateAndTime, actualSpecialistAvailableTime.get().getDateAndTime());
+        assertEquals(LocalDate.of(2022, 10, 20), actualSpecialistAvailableTime.get().getDate());
+        assertEquals(LocalTime.of(18, 0), actualSpecialistAvailableTime.get().getTime());
     }
 
     @Test
     void delete() {
-        User specialist = EntityUtil.getUserSpecialist();
-        Address address = EntityUtil.getAddress();
+        User specialist = EntityUtil.getSpecialistDmitry();
+        Address address = EntityUtil.getAddressNarvskaya();
         entityManager.persist(specialist);
         entityManager.persist(address);
         SpecialistAvailableTime specialistAvailableTime = EntityUtil.getSpecialistAvailableTime();
@@ -113,15 +112,17 @@ class SpecialistAvailableTimeRepositoryIT extends IntegrationTestBase {
 
     @Test
     void findByFilter() {
-        User specialist = EntityUtil.getUserSpecialist();
-        Address address = EntityUtil.getAddress();
+        User specialist = EntityUtil.getSpecialistDmitry();
+        Address address = EntityUtil.getAddressNarvskaya();
         entityManager.persist(specialist);
         entityManager.persist(address);
         SpecialistAvailableTime specialistAvailableTime1 = SpecialistAvailableTime.builder()
-                .dateAndTime(new DateAndTime(LocalDateTime.of(2022, 10, 25, 12, 0)))
+                .date(LocalDate.of(2022, 10, 25))
+                .time(LocalTime.of(12, 0))
                 .build();
         SpecialistAvailableTime specialistAvailableTime2 = SpecialistAvailableTime.builder()
-                .dateAndTime(new DateAndTime(LocalDateTime.of(2022, 10, 30, 12, 0)))
+                .date(LocalDate.of(2022, 10, 30))
+                .time(LocalTime.of(12, 0))
                 .build();
         specialistAvailableTime1.setSpecialist(specialist);
         specialistAvailableTime1.setAddress(address);

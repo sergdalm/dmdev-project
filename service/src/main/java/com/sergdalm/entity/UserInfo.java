@@ -53,6 +53,8 @@ public class UserInfo {
 
     private String description;
 
+    private String image;
+
     public void setUser(User user) {
         this.id = user.getId();
         this.user = user;

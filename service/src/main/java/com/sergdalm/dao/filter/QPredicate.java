@@ -1,4 +1,4 @@
-package com.sergdalm.filter;
+package com.sergdalm.dao.filter;
 
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Predicate;

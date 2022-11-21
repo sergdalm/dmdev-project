@@ -7,9 +7,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-import javax.persistence.AttributeOverride;
 import javax.persistence.Column;
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -18,6 +16,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 @Data
 @ToString(exclude = {"client", "specialist", "address", "service"})
@@ -44,9 +44,11 @@ public class Appointment {
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Service service;
 
-    @Embedded
-    @AttributeOverride(name = "time", column = @Column(name = "start_time"))
-    private DateAndTime dateAndTime;
+    @Column(nullable = false)
+    private LocalDate date;
+
+    @Column(nullable = false)
+    private LocalTime startTime;
 
     @Column(nullable = false)
     private Integer lengthMin;

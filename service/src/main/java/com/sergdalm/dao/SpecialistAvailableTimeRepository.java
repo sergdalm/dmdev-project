@@ -3,9 +3,9 @@ package com.sergdalm.dao;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.jpa.impl.JPAQuery;
+import com.sergdalm.dao.filter.QPredicate;
+import com.sergdalm.dao.filter.SpecialistAvailableTimeFilter;
 import com.sergdalm.entity.SpecialistAvailableTime;
-import com.sergdalm.filter.QPredicate;
-import com.sergdalm.filter.SpecialistAvailableTimeFilter;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -22,16 +22,16 @@ public interface SpecialistAvailableTimeRepository extends JpaRepository<Special
         Predicate predicate = QPredicate.builder()
                 .add(filter.getSpecialistId(), user.id::eq)
                 .add(filter.getAddressId(), specialistAvailableTime.address.id::eq)
-                .add(filter.getDates(), specialistAvailableTime.dateAndTime.date::in)
-                .add(filter.getTimes(), specialistAvailableTime.dateAndTime.time::in)
+                .add(filter.getDates(), specialistAvailableTime.date::in)
+                .add(filter.getTimes(), specialistAvailableTime.time::in)
                 .buildAnd();
 
         return new JPAQuery<Tuple>(entityManager)
                 .select(specialistAvailableTime)
                 .from(user)
                 .join(user.specialistAvailableTimes, specialistAvailableTime)
-                .orderBy(specialistAvailableTime.dateAndTime.date.asc(),
-                        specialistAvailableTime.dateAndTime.time.asc())
+                .orderBy(specialistAvailableTime.date.asc(),
+                        specialistAvailableTime.time.asc())
                 .where(predicate)
                 .fetch();
     }

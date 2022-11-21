@@ -5,21 +5,21 @@
     <title>User</title>
 </head>
 <body>
-<form th:action="@{/users/{userId}/update(userId=${user.id})}" method="post" th:object="${user}">
-    <label for="email">Email:
-        <input id="email" type="text" name="email" th:value="*{email}">
-    </label><br>
-    <label for="mobilePhoneNumber">Phone number:
-        <input id="mobilePhoneNumber" type="text" name="mobilePhoneNumber" th:value="*{mobilePhoneNumber}">
-    </label><br>
-    <div th:each="role : ${roles}">
-        <input th:id="${role}" type="radio" name="role" th:value="${role}" th:checked="${role == user.role}">
-        <label th:for="${role}" th:text="${role}">Role name</label>
-    </div>
-    <button type="submit">Update</button>
-</form>
-<form th:action="@{/users/{userId}/delete(userId=${user.id})}" th:if="${user.role.name() == 'ADMIN'}" method="post">
-    <button type="submit">Remove</button>
-</form>
+    <form th:action="@{/users/{userId}/update(userId=${user.id})}" method="post" th:object="${user}">
+        <label for="email">Email:
+            <input id="email" type="text" name="email" th:value="*{email}">
+        </label><br>
+        <label for="mobilePhoneNumber">Phone number:
+            <input id="mobilePhoneNumber" type="text" name="mobilePhoneNumber" th:value="*{mobilePhoneNumber}">
+        </label><br>
+        <div th:each="role : ${roles}">
+            <input th:id="${role}" type="radio" name="role" th:value="${role}" th:checked="${role == user.role}">
+            <label th:for="${role}" th:text="${role}">Role name</label>
+        </div>
+        <button type="submit">Update</button>
+    </form>
+    <form th:action="@{/users/{userId}/delete(userId=${user.id})}" th:if="${user.role.name() == 'ADMIN'}" method="post">
+        <button type="submit">Remove</button>
+    </form>
 </body>
 </html>

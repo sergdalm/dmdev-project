@@ -23,9 +23,9 @@ public class UserInfoRepositoryIT extends IntegrationTestBase {
 
     @Test
     void saveAndFindByIdUser() {
-        User user = EntityUtil.getUserSpecialist();
+        User user = EntityUtil.getSpecialistDmitry();
         entityManager.persist(user);
-        UserInfo userInfo = EntityUtil.getSpecialistUserInfo();
+        UserInfo userInfo = EntityUtil.getSpecialistDmitryUserInfo();
         userInfo.setUser(user);
         entityManager.flush();
         userInfoRepository.save(userInfo);
@@ -40,12 +40,12 @@ public class UserInfoRepositoryIT extends IntegrationTestBase {
 
     @Test
     void findAll() {
-        User specialist = EntityUtil.getUserSpecialist();
-        User client = EntityUtil.getUserClient();
+        User specialist = EntityUtil.getSpecialistDmitry();
+        User client = EntityUtil.getClientSvetlana();
         entityManager.persist(specialist);
         entityManager.persist(client);
-        UserInfo specialistUserInfo = EntityUtil.getSpecialistUserInfo();
-        UserInfo clientUserInfo = EntityUtil.getClientUserInfo();
+        UserInfo specialistUserInfo = EntityUtil.getSpecialistDmitryUserInfo();
+        UserInfo clientUserInfo = EntityUtil.getClientSvetlanaUserInfo();
         specialistUserInfo.setUser(specialist);
         clientUserInfo.setUser(client);
         entityManager.persist(specialistUserInfo);
@@ -61,9 +61,9 @@ public class UserInfoRepositoryIT extends IntegrationTestBase {
 
     @Test
     void update() {
-        User user = EntityUtil.getUserSpecialist();
+        User user = EntityUtil.getSpecialistDmitry();
         entityManager.persist(user);
-        UserInfo userInfo = EntityUtil.getSpecialistUserInfo();
+        UserInfo userInfo = EntityUtil.getSpecialistDmitryUserInfo();
         userInfo.setUser(user);
         entityManager.flush();
         userInfoRepository.save(userInfo);
@@ -85,10 +85,9 @@ public class UserInfoRepositoryIT extends IntegrationTestBase {
 
     @Test
     void shouldDeleteUserInfoWhenDeletingUser() {
-
-        User user = EntityUtil.getUserSpecialist();
+        User user = EntityUtil.getSpecialistDmitry();
         entityManager.persist(user);
-        UserInfo userInfo = EntityUtil.getSpecialistUserInfo();
+        UserInfo userInfo = EntityUtil.getSpecialistDmitryUserInfo();
         userInfo.setUser(user);
         entityManager.flush();
         userInfoRepository.save(userInfo);

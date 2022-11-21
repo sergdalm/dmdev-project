@@ -22,7 +22,7 @@ class AddressRepositoryIT extends IntegrationTestBase {
 
     @Test
     void test() {
-        Address address = EntityUtil.getAddress();
+        Address address = EntityUtil.getAddressNarvskaya();
         addressRepository.save(address);
         entityManager.flush();
         entityManager.clear();
@@ -35,7 +35,7 @@ class AddressRepositoryIT extends IntegrationTestBase {
 
     @Test
     void saveAndFindById() {
-        Address address = EntityUtil.getAddress();
+        Address address = EntityUtil.getAddressNarvskaya();
         addressRepository.save(address);
         entityManager.flush();
         entityManager.clear();
@@ -48,7 +48,7 @@ class AddressRepositoryIT extends IntegrationTestBase {
 
     @Test
     void findAll() {
-        Address address1 = EntityUtil.getAddress();
+        Address address1 = EntityUtil.getAddressNarvskaya();
         Address address2 = Address.builder()
                 .addressName("Malaya Morskaya 16")
                 .description("Go out Admiralteyskaya subway station and go to the right")
@@ -71,7 +71,7 @@ class AddressRepositoryIT extends IntegrationTestBase {
 
     @Test
     void update() {
-        Address address = EntityUtil.getAddress();
+        Address address = EntityUtil.getAddressNarvskaya();
         entityManager.persist(address);
         entityManager.flush();
         entityManager.clear();
@@ -90,7 +90,7 @@ class AddressRepositoryIT extends IntegrationTestBase {
 
     @Test
     void delete() {
-        Address address = EntityUtil.getAddress();
+        Address address = EntityUtil.getAddressNarvskaya();
         addressRepository.save(address);
 
         addressRepository.delete(address);

@@ -22,7 +22,7 @@ class ServiceRepositoryIT extends IntegrationTestBase {
 
     @Test
     void SaveAndFindById() {
-        Service service = EntityUtil.getService();
+        Service service = EntityUtil.getServiceClassicMassage();
         serviceRepository.save(service);
         entityManager.flush();
         entityManager.clear();
@@ -35,7 +35,7 @@ class ServiceRepositoryIT extends IntegrationTestBase {
 
     @Test
     void findAll() {
-        Service service = EntityUtil.getService();
+        Service service = EntityUtil.getServiceClassicMassage();
         serviceRepository.save(service);
         entityManager.flush();
         entityManager.clear();
@@ -48,7 +48,7 @@ class ServiceRepositoryIT extends IntegrationTestBase {
 
     @Test
     void saveAndUpdate() {
-        Service service = EntityUtil.getService();
+        Service service = EntityUtil.getServiceClassicMassage();
         serviceRepository.save(service);
         entityManager.flush();
         entityManager.clear();
@@ -67,7 +67,7 @@ class ServiceRepositoryIT extends IntegrationTestBase {
 
     @Test
     void saveAndDelete() {
-        Service service = EntityUtil.getService();
+        Service service = EntityUtil.getServiceClassicMassage();
         serviceRepository.save(service);
 
         serviceRepository.delete(service);

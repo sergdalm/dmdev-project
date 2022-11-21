@@ -3,22 +3,22 @@ package com.sergdalm.integration.dao;
 import com.querydsl.core.Tuple;
 import com.sergdalm.EntityUtil;
 import com.sergdalm.dao.UserRepository;
-import com.sergdalm.entity.Address;
-import com.sergdalm.entity.Appointment;
-import com.sergdalm.entity.AppointmentStatus;
-import com.sergdalm.entity.DateAndTime;
-import com.sergdalm.entity.Service;
+import com.sergdalm.dao.filter.SpecialistFilter;
+import com.sergdalm.dao.filter.UserFilter;
+import com.sergdalm.dto.UserWithInfoDto;
+import com.sergdalm.entity.Gender;
 import com.sergdalm.entity.ServiceName;
-import com.sergdalm.entity.SpecialistService;
 import com.sergdalm.entity.User;
 import com.sergdalm.integration.IntegrationTestBase;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
-import javax.persistence.EntityManager;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -26,118 +26,82 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @RequiredArgsConstructor
 class UserRepositoryIT extends IntegrationTestBase {
 
-    private final EntityManager entityManager;
     private final UserRepository userRepository;
 
-    @Test
-    void saveAndFindByIdUser() {
-        User user = EntityUtil.getUserAdministrator();
-        userRepository.save(user);
-        entityManager.flush();
-        entityManager.clear();
-
-        Optional<User> actualOptionalUser = userRepository.findById(user.getId());
-
-        assertThat(actualOptionalUser).isPresent();
-        assertEquals(user, actualOptionalUser.get());
+    static Stream<Arguments> getUserFiltersWithUserEmails() {
+        return Stream.of(
+                Arguments.of(UserFilter.builder()
+                                .firstName("Dmi")
+                                .build(),
+                        List.of("dmitry@gmail.com")),
+                Arguments.of(UserFilter.builder()
+                                .birthdayAfterDate(LocalDate.of(1990, 11, 1))
+                                .build(),
+                        List.of("alex@gmail.com", "katya@gmail.com")),
+                Arguments.of(UserFilter.builder()
+                                .birthdayAfterDate(LocalDate.of(1990, 11, 1))
+                                .build(),
+                        List.of("alex@gmail.com", "katya@gmail.com")),
+                Arguments.of(UserFilter.builder()
+                                .gender(Gender.MALE)
+                                .build(),
+                        List.of("dmitry@gmail.com")),
+                Arguments.of(UserFilter.builder()
+                                .lastName("cher")
+                                .build(),
+                        List.of("dmitry@gmail.com", "svetlana@gmail.com")),
+                Arguments.of(UserFilter.builder()
+                                .birthdayBeforeDate(LocalDate.of(1960, 1, 1))
+                                .build(),
+                        List.of("svetlana@gmail.com")),
+                Arguments.of(UserFilter.builder()
+                                .mobilePhoneNumber("214")
+                                .build(),
+                        List.of("katya@gmail.com")),
+                Arguments.of(UserFilter.builder()
+                                .hasDescription(true)
+                                .build(),
+                        List.of("dmitry@gmail.com", "natali@gmail.com")),
+                Arguments.of(UserFilter.builder()
+                                .registeredAfterDate(LocalDate.of(2022, 11, 14))
+                                .build(),
+                        List.of("marina@gmail.com", "katya@gmail.com"))
+        );
     }
 
     @Test
-    void findAll() {
-        User user1 = EntityUtil.getUserSpecialist();
-        User user2 = EntityUtil.getUserClient();
-        entityManager.persist(user1);
-        entityManager.persist(user2);
-        entityManager.flush();
-        entityManager.clear();
-
-        List<User> actualUsers = userRepository.findAll();
-
-        assertThat(actualUsers).isNotEmpty();
-        assertThat(actualUsers).hasSize(2);
-        assertThat(actualUsers).contains(user1, user2);
-    }
-
-    @Test
-    void update() {
-        User user = EntityUtil.getUserSpecialist();
-        entityManager.persist(user);
-        entityManager.flush();
-        entityManager.clear();
-
-        String newNumber = "+7(911)475-76-13";
-        user.setMobilePhoneNumber(newNumber);
-        userRepository.save(user);
-        entityManager.flush();
-        entityManager.clear();
-        Optional<User> actualOptionalUser = userRepository.findById(user.getId());
-
-        assertThat(actualOptionalUser).isPresent();
-        assertEquals(user, actualOptionalUser.get());
-        assertEquals(newNumber, actualOptionalUser.get().getMobilePhoneNumber());
-    }
-
-    @Test
-    void delete() {
-        User user = EntityUtil.getUserSpecialist();
-        entityManager.persist(user);
-
-        userRepository.delete(user);
-        Optional<User> actualOptionalUser = userRepository.findById(user.getId());
-
-        assertThat(actualOptionalUser).isNotPresent();
-    }
-
-    @Test
-    void getSpecialistsWhoHCanDoParticularMassageTypes() {
-        User specialist = EntityUtil.getUserSpecialist();
-        Service service = Service.builder()
-                .name(ServiceName.LYMPHATIC_DRAINAGE_MASSAGE)
-                .description("Good for losing weight")
+    void findSpecialistsByFilterWithConditionOnServiceNames() {
+        List<ServiceName> services = List.of(ServiceName.HONEY_MASSAGE, ServiceName.CLASSIC_MASSAGE);
+        SpecialistFilter filer = SpecialistFilter.builder()
+                .serviceNames(services)
                 .build();
-        entityManager.persist(specialist);
-        entityManager.persist(service);
-        SpecialistService specialistService = SpecialistService.builder()
-                .lengthMin(90)
-                .price(1500)
-                .build();
-        specialistService.setSpecialist(specialist);
-        specialistService.setService(service);
-        entityManager.persist(specialistService);
 
-        List<ServiceName> services = List.of(ServiceName.LYMPHATIC_DRAINAGE_MASSAGE);
-        List<User> actualUsers = userRepository.getUsersByMassageType(services, entityManager);
+        List<User> actualUsers = userRepository.findSpecialistsByFilter(filer);
 
         assertThat(actualUsers).hasSize(1);
-        assertThat(actualUsers).contains(specialist);
+        assertThat(actualUsers.stream().map(User::getEmail).toList()).contains("dmitry@gmail.com");
+        System.out.println(actualUsers);
+    }
+
+    @Test
+    void findSpecialistsByFilterWhoHasReview() {
+        SpecialistFilter filer = SpecialistFilter.builder()
+                .hasReviews(true)
+                .build();
+
+        List<User> actualUsers = userRepository.findSpecialistsByFilter(filer);
+
+        assertThat(actualUsers).hasSize(1);
+        assertThat(actualUsers.stream().map(User::getEmail).toList()).contains("dmitry@gmail.com");
+        System.out.println(actualUsers);
     }
 
     @Test
     void findClientsWhoDidNotPaid() {
-        Service service = EntityUtil.getService();
-        User client = EntityUtil.getUserClient();
-        User specialist = EntityUtil.getUserSpecialist();
-        Address address = Address.builder()
-                .addressName("Stachek 123")
-                .description("Near subway Narvsakya")
-                .build();
-        Appointment appointment = Appointment.builder()
-                .dateAndTime(new DateAndTime(LocalDateTime.of(2022, 10, 20, 12, 0)))
-                .lengthMin(90)
-                .price(2000)
-                .status(AppointmentStatus.COMPLETED_NOT_PAID)
-                .build();
-        entityManager.persist(client);
-        entityManager.persist(specialist);
-        entityManager.persist(address);
-        entityManager.persist(service);
-        appointment.setClient(client);
-        appointment.setSpecialist(specialist);
-        appointment.setAddress(address);
-        appointment.setService(service);
-        entityManager.persist(appointment);
 
-        List<Tuple> actualUserAndAmountList = userRepository.findClientsWithAmountWhoDidNotPaid(entityManager);
+        User client = EntityUtil.getClientSvetlana();
+
+        List<Tuple> actualUserAndAmountList = userRepository.findClientsWithAmountWhoDidNotPaid();
 
         List<User> actualUserList = actualUserAndAmountList.stream()
                 .map(it -> it.get(0, User.class))
@@ -145,6 +109,17 @@ class UserRepositoryIT extends IntegrationTestBase {
 
         assertThat(actualUserAndAmountList).hasSize(1);
         assertThat(actualUserList).contains(client);
+    }
+
+    @ParameterizedTest
+    @MethodSource("getUserFiltersWithUserEmails")
+    void findUserByFilter(UserFilter userFilter, List<String> emails) {
+
+        List<UserWithInfoDto> actualResult = userRepository.findAll(userFilter);
+        List<String> actualEmails = actualResult.stream().map(UserWithInfoDto::getEmail).toList();
+
+        assertThat(actualResult).hasSize(emails.size());
+        assertEquals(emails, actualEmails);
     }
 }
 

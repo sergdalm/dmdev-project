@@ -5,7 +5,6 @@ import com.sergdalm.dao.AppointmentRepository;
 import com.sergdalm.entity.Address;
 import com.sergdalm.entity.Appointment;
 import com.sergdalm.entity.AppointmentStatus;
-import com.sergdalm.entity.DateAndTime;
 import com.sergdalm.entity.Service;
 import com.sergdalm.entity.User;
 import com.sergdalm.integration.IntegrationTestBase;
@@ -13,7 +12,8 @@ import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 
 import javax.persistence.EntityManager;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,10 +28,10 @@ class AppointmentRepositoryIT extends IntegrationTestBase {
 
     @Test
     void saveAndFindById() {
-        User specialist = EntityUtil.getUserSpecialist();
-        User client = EntityUtil.getUserClient();
-        Service service = EntityUtil.getService();
-        Address address = EntityUtil.getAddress();
+        User specialist = EntityUtil.getSpecialistDmitry();
+        User client = EntityUtil.getClientSvetlana();
+        Service service = EntityUtil.getServiceClassicMassage();
+        Address address = EntityUtil.getAddressNarvskaya();
         entityManager.persist(specialist);
         entityManager.persist(client);
         entityManager.persist(service);
@@ -54,10 +54,10 @@ class AppointmentRepositoryIT extends IntegrationTestBase {
 
     @Test
     void findAll() {
-        User specialist = EntityUtil.getUserSpecialist();
-        User client = EntityUtil.getUserClient();
-        Service service = EntityUtil.getService();
-        Address address = EntityUtil.getAddress();
+        User specialist = EntityUtil.getSpecialistDmitry();
+        User client = EntityUtil.getClientSvetlana();
+        Service service = EntityUtil.getServiceClassicMassage();
+        Address address = EntityUtil.getAddressNarvskaya();
         entityManager.persist(specialist);
         entityManager.persist(client);
         entityManager.persist(service);
@@ -92,10 +92,10 @@ class AppointmentRepositoryIT extends IntegrationTestBase {
 
     @Test
     void update() {
-        User specialist = EntityUtil.getUserSpecialist();
-        User client = EntityUtil.getUserClient();
-        Service service = EntityUtil.getService();
-        Address address = EntityUtil.getAddress();
+        User specialist = EntityUtil.getSpecialistDmitry();
+        User client = EntityUtil.getClientSvetlana();
+        Service service = EntityUtil.getServiceClassicMassage();
+        Address address = EntityUtil.getAddressNarvskaya();
         entityManager.persist(specialist);
         entityManager.persist(client);
         entityManager.persist(service);
@@ -123,10 +123,10 @@ class AppointmentRepositoryIT extends IntegrationTestBase {
 
     @Test
     void delete() {
-        User specialist = EntityUtil.getUserSpecialist();
-        User client = EntityUtil.getUserClient();
-        Service service = EntityUtil.getService();
-        Address address = EntityUtil.getAddress();
+        User specialist = EntityUtil.getSpecialistDmitry();
+        User client = EntityUtil.getClientSvetlana();
+        Service service = EntityUtil.getServiceClassicMassage();
+        Address address = EntityUtil.getAddressNarvskaya();
         entityManager.persist(specialist);
         entityManager.persist(client);
         entityManager.persist(service);
@@ -149,10 +149,10 @@ class AppointmentRepositoryIT extends IntegrationTestBase {
 
     @Test
     void findByStatus() {
-        User specialist = EntityUtil.getUserSpecialist();
-        User client = EntityUtil.getUserClient();
-        Service service = EntityUtil.getService();
-        Address address = EntityUtil.getAddress();
+        User specialist = EntityUtil.getSpecialistDmitry();
+        User client = EntityUtil.getClientSvetlana();
+        Service service = EntityUtil.getServiceClassicMassage();
+        Address address = EntityUtil.getAddressNarvskaya();
         entityManager.persist(specialist);
         entityManager.persist(client);
         entityManager.persist(service);
@@ -184,7 +184,8 @@ class AppointmentRepositoryIT extends IntegrationTestBase {
 
     private Appointment getAppointmentWithStatusCompletedPaid() {
         return Appointment.builder()
-                .dateAndTime(new DateAndTime(LocalDateTime.of(2022, 10, 3, 12, 0)))
+                .date(LocalDate.of(2022, 10, 3))
+                .startTime(LocalTime.of(12, 0))
                 .price(1000)
                 .lengthMin(60)
                 .status(AppointmentStatus.COMPLETED_PAID)
@@ -193,7 +194,8 @@ class AppointmentRepositoryIT extends IntegrationTestBase {
 
     private Appointment getAppointmentWithStatusCompletedNotPaid() {
         return Appointment.builder()
-                .dateAndTime(new DateAndTime(LocalDateTime.of(2022, 10, 3, 13, 0)))
+                .date(LocalDate.of(2022, 10, 3))
+                .startTime(LocalTime.of(13, 0))
                 .price(1000)
                 .lengthMin(60)
                 .status(AppointmentStatus.COMPLETED_NOT_PAID)

@@ -26,9 +26,9 @@ class ServiceSaleRepositoryIT extends IntegrationTestBase {
 
     @Test
     void saveAndFindById() {
-        User specialist = EntityUtil.getUserSpecialist();
-        Address address = EntityUtil.getAddress();
-        Service service = EntityUtil.getService();
+        User specialist = EntityUtil.getSpecialistDmitry();
+        Address address = EntityUtil.getAddressNarvskaya();
+        Service service = EntityUtil.getServiceClassicMassage();
         SpecialistService specialistService = EntityUtil.getSpecialistService();
         entityManager.persist(specialist);
         entityManager.persist(address);
@@ -53,9 +53,9 @@ class ServiceSaleRepositoryIT extends IntegrationTestBase {
 
     @Test
     void findAll() {
-        User specialist = EntityUtil.getUserSpecialist();
-        Address address = EntityUtil.getAddress();
-        Service service = EntityUtil.getService();
+        User specialist = EntityUtil.getSpecialistDmitry();
+        Address address = EntityUtil.getAddressNarvskaya();
+        Service service = EntityUtil.getServiceClassicMassage();
         SpecialistService specialistService = EntityUtil.getSpecialistService();
         entityManager.persist(specialist);
         entityManager.persist(address);
@@ -78,9 +78,9 @@ class ServiceSaleRepositoryIT extends IntegrationTestBase {
 
     @Test
     void delete() {
-        User specialist = EntityUtil.getUserSpecialist();
-        Address address = EntityUtil.getAddress();
-        Service service = EntityUtil.getService();
+        User specialist = EntityUtil.getSpecialistDmitry();
+        Address address = EntityUtil.getAddressNarvskaya();
+        Service service = EntityUtil.getServiceClassicMassage();
         SpecialistService specialistService = EntityUtil.getSpecialistService();
         entityManager.persist(specialist);
         entityManager.persist(address);
@@ -104,9 +104,9 @@ class ServiceSaleRepositoryIT extends IntegrationTestBase {
 
     @Test
     void update() {
-        User specialist = EntityUtil.getUserSpecialist();
-        Address address = EntityUtil.getAddress();
-        Service service = EntityUtil.getService();
+        User specialist = EntityUtil.getSpecialistDmitry();
+        Address address = EntityUtil.getAddressNarvskaya();
+        Service service = EntityUtil.getServiceClassicMassage();
         SpecialistService specialistService = EntityUtil.getSpecialistService();
         entityManager.persist(specialist);
         entityManager.persist(address);

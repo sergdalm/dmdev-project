@@ -1,4 +1,4 @@
-package com.sergdalm.filter;
+package com.sergdalm.dao.filter;
 
 import lombok.Builder;
 import lombok.Value;

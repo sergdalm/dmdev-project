@@ -23,8 +23,8 @@ class ReviewRepositoryIT extends IntegrationTestBase {
 
     @Test
     void SaveAndFindById() {
-        User client = EntityUtil.getUserClient();
-        User specialist = EntityUtil.getUserSpecialist();
+        User client = EntityUtil.getClientSvetlana();
+        User specialist = EntityUtil.getSpecialistDmitry();
         entityManager.persist(client);
         entityManager.persist(specialist);
         Review review = EntityUtil.getReview();
@@ -44,8 +44,8 @@ class ReviewRepositoryIT extends IntegrationTestBase {
 
     @Test
     void SaveAndUpdate() {
-        User client = EntityUtil.getUserClient();
-        User specialist = EntityUtil.getUserSpecialist();
+        User client = EntityUtil.getClientSvetlana();
+        User specialist = EntityUtil.getSpecialistDmitry();
         entityManager.persist(client);
         entityManager.persist(specialist);
         Review review = EntityUtil.getReview();
@@ -69,8 +69,8 @@ class ReviewRepositoryIT extends IntegrationTestBase {
 
     @Test
     void saveAndDelete() {
-        User client = EntityUtil.getUserClient();
-        User specialist = EntityUtil.getUserSpecialist();
+        User client = EntityUtil.getClientSvetlana();
+        User specialist = EntityUtil.getSpecialistDmitry();
         entityManager.persist(client);
         entityManager.persist(specialist);
         Review review = EntityUtil.getReview();
@@ -89,8 +89,8 @@ class ReviewRepositoryIT extends IntegrationTestBase {
 
     @Test
     void findAll() {
-        User client = EntityUtil.getUserClient();
-        User specialist = EntityUtil.getUserSpecialist();
+        User client = EntityUtil.getClientSvetlana();
+        User specialist = EntityUtil.getSpecialistDmitry();
         entityManager.persist(client);
         entityManager.persist(specialist);
         Review review = EntityUtil.getReview();

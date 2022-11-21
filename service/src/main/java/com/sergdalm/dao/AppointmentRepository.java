@@ -2,9 +2,9 @@ package com.sergdalm.dao;
 
 import com.querydsl.core.types.Predicate;
 import com.querydsl.jpa.impl.JPAQuery;
+import com.sergdalm.dao.filter.QPredicate;
 import com.sergdalm.entity.Appointment;
 import com.sergdalm.entity.AppointmentStatus;
-import com.sergdalm.filter.QPredicate;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

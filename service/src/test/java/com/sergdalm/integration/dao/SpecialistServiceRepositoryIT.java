@@ -26,8 +26,8 @@ class SpecialistServiceRepositoryIT extends IntegrationTestBase {
 
     @Test
     void saveAndFindById() {
-        Service service = EntityUtil.getService();
-        User specialist = EntityUtil.getUserSpecialist();
+        Service service = EntityUtil.getServiceClassicMassage();
+        User specialist = EntityUtil.getSpecialistDmitry();
         entityManager.persist(service);
         entityManager.persist(specialist);
         SpecialistService specialistService = EntityUtil.getSpecialistService();
@@ -45,7 +45,7 @@ class SpecialistServiceRepositoryIT extends IntegrationTestBase {
 
     @Test
     void findAll() {
-        Service service1 = EntityUtil.getService();
+        Service service1 = EntityUtil.getServiceClassicMassage();
         Service service2 = Service.builder()
                 .name(ServiceName.HONEY_MASSAGE)
                 .description("Good for health")
@@ -55,7 +55,7 @@ class SpecialistServiceRepositoryIT extends IntegrationTestBase {
                 .price(1500)
                 .lengthMin(90)
                 .build();
-        User specialist = EntityUtil.getUserSpecialist();
+        User specialist = EntityUtil.getSpecialistDmitry();
         entityManager.persist(service1);
         entityManager.persist(service2);
         entityManager.persist(specialist);
@@ -76,8 +76,8 @@ class SpecialistServiceRepositoryIT extends IntegrationTestBase {
 
     @Test
     void update() {
-        Service service = EntityUtil.getService();
-        User specialist = EntityUtil.getUserSpecialist();
+        Service service = EntityUtil.getServiceClassicMassage();
+        User specialist = EntityUtil.getSpecialistDmitry();
         entityManager.persist(service);
         entityManager.persist(specialist);
         SpecialistService specialistService = EntityUtil.getSpecialistService();
@@ -99,9 +99,9 @@ class SpecialistServiceRepositoryIT extends IntegrationTestBase {
 
     @Test
     void delete() {
-        Service service = EntityUtil.getService();
-        User specialist = EntityUtil.getUserSpecialist();
-        UserInfo userInfo = EntityUtil.getSpecialistUserInfo();
+        Service service = EntityUtil.getServiceClassicMassage();
+        User specialist = EntityUtil.getSpecialistDmitry();
+        UserInfo userInfo = EntityUtil.getSpecialistDmitryUserInfo();
         entityManager.persist(service);
         entityManager.persist(specialist);
         userInfo.setUser(specialist);
