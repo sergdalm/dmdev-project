@@ -12,10 +12,29 @@
         <label for="mobilePhoneNumber">Phone number:
             <input id="mobilePhoneNumber" type="text" name="mobilePhoneNumber" th:value="*{mobilePhoneNumber}">
         </label><br>
+        <label for="firstName">First name:
+            <input id="firstName" type="text" name="firstName" th:value="*{firstName}">
+        </label><br>
+        <label for="lastName">Last name:
+            <input id="lastName" type="text" name="lastName" th:value="*{lastName}">
+        </label><br>
         <div th:each="role : ${roles}">
             <input th:id="${role}" type="radio" name="role" th:value="${role}" th:checked="${role == user.role}">
             <label th:for="${role}" th:text="${role}">Role name</label>
         </div>
+        <div th:each="gender : ${genders}">
+            <input th:id="${gender}" type="radio" name="gender" th:value="${gender}" th:checked="${gender == user.gender}">
+            <label th:for="${gender}" th:text="${gender}">Gender name</label>
+        </div>
+        <label for="birthday">Birthday:
+        <input id="birthday" type="date" name="birthday" th:value="*{birthday}">
+        </label><br>
+        <label for="description">Description:
+            <input id="description" type="text" name="description" th:value="*{description}">
+        </label><br>
+        <div>Registered at:
+            <div th:value="*{registeredAt}">Registered date and time</div>
+        </div><br>
         <button type="submit">Update</button>
     </form>
     <form th:action="@{/users/{userId}/delete(userId=${user.id})}" th:if="${user.role.name() == 'ADMIN'}" method="post">

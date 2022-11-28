@@ -1,7 +1,7 @@
 package com.sergdalm.mapper;
 
-import com.sergdalm.entity.Service;
 import com.sergdalm.dto.ServiceReadDto;
+import com.sergdalm.entity.Service;
 import org.springframework.stereotype.Component;
 
 @Component

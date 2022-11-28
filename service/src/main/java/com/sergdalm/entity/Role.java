@@ -1,7 +1,14 @@
 package com.sergdalm.entity;
 
-public enum Role {
+import org.springframework.security.core.GrantedAuthority;
+
+public enum Role implements GrantedAuthority {
     SPECIALIST,
     CLIENT,
-    ADMINISTRATOR
+    ADMINISTRATOR;
+
+    @Override
+    public String getAuthority() {
+        return name();
+    }
 }

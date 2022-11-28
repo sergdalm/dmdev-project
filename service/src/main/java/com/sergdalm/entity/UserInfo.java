@@ -35,12 +35,6 @@ public class UserInfo {
     @PrimaryKeyJoinColumn
     private User user;
 
-    @Column(nullable = false)
-    private String firstName;
-
-    @Column(nullable = false)
-    private String lastName;
-
     @Enumerated(value = EnumType.STRING)
     @Column(nullable = false)
     private Gender gender;

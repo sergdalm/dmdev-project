@@ -1,8 +1,8 @@
 package com.sergdalm.mapper;
 
 import com.sergdalm.EntityUtil;
-import com.sergdalm.entity.Service;
 import com.sergdalm.dto.ServiceReadDto;
+import com.sergdalm.entity.Service;
 import lombok.AllArgsConstructor;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

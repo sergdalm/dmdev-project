@@ -3,6 +3,7 @@ package com.sergdalm.integration.service;
 
 import com.sergdalm.EntityUtil;
 import com.sergdalm.dto.UserCreateEditDto;
+import com.sergdalm.dto.UserReadDto;
 import com.sergdalm.dto.UserWithInfoDto;
 import com.sergdalm.entity.Gender;
 import com.sergdalm.entity.Role;
@@ -12,7 +13,6 @@ import lombok.AllArgsConstructor;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,14 +41,13 @@ public class UserServiceIT extends IntegrationTestBase {
             .lastName("Kim")
             .birthday(LocalDate.of(1994, 5, 7))
             .gender(Gender.FEMALE)
-            .registeredAt(LocalDateTime.now())
             .build();
 
     private final UserService userService;
 
     @Test
     void findAll() {
-        List<UserWithInfoDto> result = userService.findAll();
+        List<UserReadDto> result = userService.findAll();
         assertThat(result).hasSize(6);
     }
 
@@ -72,7 +71,6 @@ public class UserServiceIT extends IntegrationTestBase {
         assertSame(NEW_USER_DTO.getLastName(), actualResult.getLastName());
         assertSame(NEW_USER_DTO.getBirthday(), actualResult.getBirthday());
         assertSame(NEW_USER_DTO.getGender(), actualResult.getGender());
-        assertSame(NEW_USER_DTO.getRegisteredAt(), actualResult.getRegisteredAt());
     }
 
     @Test

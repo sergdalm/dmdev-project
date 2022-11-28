@@ -5,7 +5,6 @@ import com.sergdalm.EntityUtil;
 import com.sergdalm.dao.UserRepository;
 import com.sergdalm.dao.filter.SpecialistFilter;
 import com.sergdalm.dao.filter.UserFilter;
-import com.sergdalm.dto.UserWithInfoDto;
 import com.sergdalm.entity.Gender;
 import com.sergdalm.entity.ServiceName;
 import com.sergdalm.entity.User;
@@ -17,6 +16,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -28,77 +28,119 @@ class UserRepositoryIT extends IntegrationTestBase {
 
     private final UserRepository userRepository;
 
-    static Stream<Arguments> getUserFiltersWithUserEmails() {
+    @ParameterizedTest(name = "{index} {0}")
+    @MethodSource("getSpecialistFilterWithExpectedUsrList")
+    void findSpecialistsByFilter(String testDisplayName,
+                                 SpecialistFilter filter,
+                                 List<String> expectedList) {
+        List<User> actualResult = userRepository.findSpecialistsByFilter(filter);
+        assertThat(actualResult).hasSize(expectedList.size());
+        List<String> actualEmailList = actualResult.stream()
+                .map(User::getEmail)
+                .toList();
+        for (String expectedSpecialistEmail : expectedList) {
+            assertThat(actualEmailList).contains(expectedSpecialistEmail);
+        }
+    }
+
+    static Stream<Arguments> getSpecialistFilterWithExpectedUsrList() {
+        List<String> listWithSpecialistDmitry = List.of("dmitry@gmail.com");
         return Stream.of(
-                Arguments.of(UserFilter.builder()
-                                .firstName("Dmi")
+                // Find specialist who has certain email
+                Arguments.of("email",
+                        SpecialistFilter.builder()
+                                .email("dm")
                                 .build(),
-                        List.of("dmitry@gmail.com")),
-                Arguments.of(UserFilter.builder()
-                                .birthdayAfterDate(LocalDate.of(1990, 11, 1))
+                        listWithSpecialistDmitry),
+                // Find specialist who has certain first name
+                Arguments.of("first name",
+                        SpecialistFilter.builder()
+                                .firstName("dm")
                                 .build(),
-                        List.of("alex@gmail.com", "katya@gmail.com")),
-                Arguments.of(UserFilter.builder()
-                                .birthdayAfterDate(LocalDate.of(1990, 11, 1))
-                                .build(),
-                        List.of("alex@gmail.com", "katya@gmail.com")),
-                Arguments.of(UserFilter.builder()
-                                .gender(Gender.MALE)
-                                .build(),
-                        List.of("dmitry@gmail.com")),
-                Arguments.of(UserFilter.builder()
-                                .lastName("cher")
+                        listWithSpecialistDmitry),
+                // Find specialist who has certain last name
+                Arguments.of("last name",
+                        SpecialistFilter.builder()
+                                .lastName("ch")
                                 .build(),
                         List.of("dmitry@gmail.com", "svetlana@gmail.com")),
-                Arguments.of(UserFilter.builder()
-                                .birthdayBeforeDate(LocalDate.of(1960, 1, 1))
+                // Find specialist whose gender is male
+                Arguments.of("gender: male",
+                        SpecialistFilter.builder()
+                                .gender(Gender.MALE)
                                 .build(),
-                        List.of("svetlana@gmail.com")),
-                Arguments.of(UserFilter.builder()
-                                .mobilePhoneNumber("214")
+                        listWithSpecialistDmitry),
+                // Find specialist whose gender is female
+                Arguments.of("gender: female",
+                        SpecialistFilter.builder()
+                                .gender(Gender.FEMALE)
                                 .build(),
-                        List.of("katya@gmail.com")),
-                Arguments.of(UserFilter.builder()
-                                .hasDescription(true)
+                        List.of("natali@gmail.com", "alex@gmail.com", "svetlana@gmail.com", "marina@gmail.com", "katya@gmail.com")),
+                // Find specialist who born before certain date
+                Arguments.of("birthday before date",
+                        SpecialistFilter.builder()
+                                .birthdayBeforeDate(LocalDate.of(1980, 1, 1))
                                 .build(),
-                        List.of("dmitry@gmail.com", "natali@gmail.com")),
-                Arguments.of(UserFilter.builder()
-                                .registeredAfterDate(LocalDate.of(2022, 11, 14))
+                        List.of("dmitry@gmail.com", "svetlana@gmail.com")),
+                // Find specialist who born after certain date
+                Arguments.of("birthday after date",
+                        SpecialistFilter.builder()
+                                .birthdayAfterDate(LocalDate.of(1990, 1, 1))
                                 .build(),
-                        List.of("marina@gmail.com", "katya@gmail.com"))
+                        List.of("alex@gmail.com", "marina@gmail.com", "katya@gmail.com")),
+                // Find specialist who registered before certain date
+                Arguments.of("registered before date",
+                        SpecialistFilter.builder()
+                                .registeredBeforeDate(LocalDate.of(2022, 11, 15))
+                                .build(),
+                        List.of("dmitry@gmail.com", "natali@gmail.com", "alex@gmail.com", "svetlana@gmail.com")),
+                // Find specialist who registered after certain date
+                Arguments.of("registered after date",
+                        SpecialistFilter.builder()
+                                .registeredAfterDate(LocalDate.of(2022, 11, 15))
+                                .build(),
+                        List.of("marina@gmail.com", "katya@gmail.com")),
+                // Find specialist who have review
+                Arguments.of("with reviews",
+                        SpecialistFilter.builder()
+                                .hasReviews(true)
+                                .build(),
+                        listWithSpecialistDmitry),
+                // Find Specialists by filter with condition on service names
+                Arguments.of("by service name",
+                        SpecialistFilter.builder()
+                                .serviceNames(List.of(ServiceName.HONEY_MASSAGE, ServiceName.CLASSIC_MASSAGE))
+                                .build(),
+                        listWithSpecialistDmitry),
+                // Find specialists who have appointments on certain address's id
+                Arguments.of("by appointments' address ",
+                        SpecialistFilter.builder()
+                                .addressIdWhereHaveAppointments(List.of(2))
+                                .build(),
+                        listWithSpecialistDmitry),
+                // Find specialists who are available on certain dates
+                Arguments.of("available on dates",
+                        SpecialistFilter.builder()
+                                .availableDates(List.of(LocalDate.of(2022, 11, 26)))
+                                .build(),
+                        listWithSpecialistDmitry),
+                // Find specialists who are available in certain
+                Arguments.of("available at times",
+                        SpecialistFilter.builder()
+                                .availableTimes(List.of(LocalTime.of(20, 0, 0)))
+                                .build(),
+                        List.of("natali@gmail.com")),
+                // Find specialists who are available on certain address's id
+                Arguments.of("by available addresses",
+                        SpecialistFilter.builder()
+                                .availableAddressesId(List.of(1))
+                                .build(),
+                        listWithSpecialistDmitry)
         );
     }
 
     @Test
-    void findSpecialistsByFilterWithConditionOnServiceNames() {
-        List<ServiceName> services = List.of(ServiceName.HONEY_MASSAGE, ServiceName.CLASSIC_MASSAGE);
-        SpecialistFilter filer = SpecialistFilter.builder()
-                .serviceNames(services)
-                .build();
-
-        List<User> actualUsers = userRepository.findSpecialistsByFilter(filer);
-
-        assertThat(actualUsers).hasSize(1);
-        assertThat(actualUsers.stream().map(User::getEmail).toList()).contains("dmitry@gmail.com");
-        System.out.println(actualUsers);
-    }
-
-    @Test
-    void findSpecialistsByFilterWhoHasReview() {
-        SpecialistFilter filer = SpecialistFilter.builder()
-                .hasReviews(true)
-                .build();
-
-        List<User> actualUsers = userRepository.findSpecialistsByFilter(filer);
-
-        assertThat(actualUsers).hasSize(1);
-        assertThat(actualUsers.stream().map(User::getEmail).toList()).contains("dmitry@gmail.com");
-        System.out.println(actualUsers);
-    }
-
-    @Test
     void findClientsWhoDidNotPaid() {
-
         User client = EntityUtil.getClientSvetlana();
 
         List<Tuple> actualUserAndAmountList = userRepository.findClientsWithAmountWhoDidNotPaid();
@@ -111,15 +153,67 @@ class UserRepositoryIT extends IntegrationTestBase {
         assertThat(actualUserList).contains(client);
     }
 
-    @ParameterizedTest
+    @ParameterizedTest(name = "{index} {0}")
     @MethodSource("getUserFiltersWithUserEmails")
-    void findUserByFilter(UserFilter userFilter, List<String> emails) {
+    void findUserByFilter(String testDisplayName,
+                          UserFilter userFilter,
+                          List<String> emails) {
 
-        List<UserWithInfoDto> actualResult = userRepository.findAll(userFilter);
-        List<String> actualEmails = actualResult.stream().map(UserWithInfoDto::getEmail).toList();
+        List<User> actualResult = userRepository.findAll(userFilter);
+        List<String> actualEmails = actualResult.stream().map(User::getEmail).toList();
 
         assertThat(actualResult).hasSize(emails.size());
         assertEquals(emails, actualEmails);
+    }
+
+    static Stream<Arguments> getUserFiltersWithUserEmails() {
+        return Stream.of(
+                Arguments.of("first name",
+                        UserFilter.builder()
+                                .firstName("Dmi")
+                                .build(),
+                        List.of("dmitry@gmail.com")),
+                Arguments.of("last name",
+                        UserFilter.builder()
+                                .lastName("cher")
+                                .build(),
+                        List.of("dmitry@gmail.com", "svetlana@gmail.com")),
+                Arguments.of("birthday after the date",
+                        UserFilter.builder()
+                                .birthdayAfterDate(LocalDate.of(1990, 11, 1))
+                                .build(),
+                        List.of("alex@gmail.com", "katya@gmail.com")),
+                Arguments.of("birthday before the date",
+                        UserFilter.builder()
+                                .birthdayBeforeDate(LocalDate.of(1960, 1, 1))
+                                .build(),
+                        List.of("svetlana@gmail.com")),
+                Arguments.of("gender",
+                        UserFilter.builder()
+                                .gender(Gender.MALE)
+                                .build(),
+                        List.of("dmitry@gmail.com")),
+                Arguments.of("mobile phone",
+                        UserFilter.builder()
+                                .mobilePhoneNumber("214")
+                                .build(),
+                        List.of("katya@gmail.com")),
+                Arguments.of("have description",
+                        UserFilter.builder()
+                                .hasDescription(true)
+                                .build(),
+                        List.of("dmitry@gmail.com", "natali@gmail.com")),
+                Arguments.of("registered after date",
+                        UserFilter.builder()
+                                .registeredAfterDate(LocalDate.of(2022, 11, 14))
+                                .build(),
+                        List.of("marina@gmail.com", "katya@gmail.com")),
+                Arguments.of("registered before date",
+                        UserFilter.builder()
+                                .registeredAfterDate(LocalDate.of(2022, 11, 15))
+                                .build(),
+                        List.of("dmitry@gmail.com", "natali@gmail.com", "alex@gmail.com", "svetlana@gmail.com"))
+        );
     }
 }
 

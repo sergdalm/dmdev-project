@@ -5,14 +5,19 @@
     <title>Login</title>
 </head>
 <body>
-    <form action="/login" method="post">
-        <label for="email"> Username
-            <input id="email" type ="text" name="email">
-        </label><br>
-        <label for="password"> Password
-            <input id="password" type ="password" name="password">
-        </label><br>
-        <button type="submit">Login</button>
-    </form>
+<div th:insert="~{fragment :: header}"></div>
+<form th:action="@{/login}" method="post" >
+    <div style="color:red" th:if="${param.error}">Bad credentials</div>
+    <label for="email">Email:
+        <input id="email" type="text" name="email">
+    </label><br>
+    <label for="password">Password:
+        <input id="password" type="password" name="password">
+    </label><br>
+    <button type="submit">Login</button>
+</form>
+<form action="/users/registration">
+    <button type="submit">Registration</button>
+</form>
 </body>
 </html>

@@ -30,20 +30,9 @@ public class CriteriaPredicate {
         return this;
     }
 
-    public <T> CriteriaPredicate addAsSingleConditions(Collection<T> collection, Function<Collection<T>, Predicate> function) {
-        if (CollectionUtils.isNotEmpty(collection)) {
-            for (T condition : collection) {
-                predicates.add(function.apply(List.of(condition)));
-            }
-        }
-        return this;
-    }
-
-    public <T> CriteriaPredicate addAsSingleConditionsForCollection(Collection<T> collection, Function<T, Predicate> function) {
-        if (CollectionUtils.isNotEmpty(collection)) {
-            for (T condition : collection) {
-                predicates.add(function.apply(condition));
-            }
+    public CriteriaPredicate addStringWithPercentage(String object, Function<String, Predicate> function) {
+        if (object != null) {
+            predicates.add(function.apply("%" + object.toLowerCase() + "%"));
         }
         return this;
     }

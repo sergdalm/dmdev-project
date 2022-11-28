@@ -20,12 +20,9 @@ class UserCreateEditToUserInfoMapperTest {
     void mapToEntityFromDto() {
         UserCreateEditDto userCreateEditDto = DtoUtill.NEW_USER_SPECIALIST_DTO;
         UserInfo userInfo = UserInfo.builder()
-                .firstName(userCreateEditDto.getFirstName())
-                .lastName(userCreateEditDto.getLastName())
                 .gender(userCreateEditDto.getGender())
                 .birthday(userCreateEditDto.getBirthday())
                 .description(userCreateEditDto.getDescription())
-                .registeredAt(userCreateEditDto.getRegisteredAt())
                 .build();
 
         UserInfo actualResult = userCreateEditToUserInfoMapper.mapToEntity(userCreateEditDto);
@@ -34,8 +31,6 @@ class UserCreateEditToUserInfoMapperTest {
         assertEquals(userInfo.getBirthday(), actualResult.getBirthday());
         assertEquals(userInfo.getGender(), actualResult.getGender());
         assertEquals(userInfo.getDescription(), actualResult.getDescription());
-        assertEquals(userInfo.getFirstName(), actualResult.getFirstName());
-        assertEquals(userInfo.getLastName(), actualResult.getLastName());
     }
 
     @Test
@@ -49,7 +44,5 @@ class UserCreateEditToUserInfoMapperTest {
         assertEquals(userCreateEditDto.getBirthday(), actualResult.getBirthday());
         assertEquals(userCreateEditDto.getGender(), actualResult.getGender());
         assertEquals(userCreateEditDto.getDescription(), actualResult.getDescription());
-        assertEquals(userCreateEditDto.getFirstName(), actualResult.getFirstName());
-        assertEquals(userCreateEditDto.getLastName(), actualResult.getLastName());
     }
 }

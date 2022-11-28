@@ -33,10 +33,11 @@ import java.time.LocalTime;
 import java.util.List;
 
 import static com.sergdalm.entity.User_.email;
+import static com.sergdalm.entity.User_.firstName;
 import static com.sergdalm.entity.User_.id;
+import static com.sergdalm.entity.User_.lastName;
 import static com.sergdalm.entity.User_.mobilePhoneNumber;
 import static com.sergdalm.entity.User_.specialistServices;
-
 
 @AllArgsConstructor
 public class SpecialistSearchImpl implements SpecialistSearch {
@@ -55,14 +56,18 @@ public class SpecialistSearchImpl implements SpecialistSearch {
         ListJoin<User, SpecialistService> ssJoin = serviceSubqueryUser.join(specialistServices);
         Join<SpecialistService, Service> serviceJoin = ssJoin.join(SpecialistService_.service);
 
+        Subquery<Long> availableTimeSubquery = criteria.subquery(Long.class);
+        Root<User> availableTimeSubqueryUser = availableTimeSubquery.correlate(user);
+        ListJoin<User, SpecialistAvailableTime> availableTimeJoin = availableTimeSubqueryUser.join(User_.specialistAvailableTimes);
+
         Subquery<Long> reviewSubquery = criteria.subquery(Long.class);
         Root<Review> subReview = reviewSubquery.from(Review.class);
         Join<Review, User> reviewSubUser = subReview.join(Review_.specialist);
 
-        Subquery<Long> appointmentAddressSubquery = criteria.subquery(Long.class);
-        Root<User> appointmentSubqueryUser = appointmentAddressSubquery.correlate(user);
-        ListJoin<User, Appointment> appointmentJoin = appointmentSubqueryUser.join(User_.specialistAppointments);
-        Join<Appointment, Address> appointmentAddressJoin = appointmentJoin.join(Appointment_.address);
+        Subquery<Long> appointmentSubquery = criteria.subquery(Long.class);
+        Root<User> appointmentSubqueryUser = appointmentSubquery.correlate(user);
+        ListJoin<User, Appointment> appointmentUserJoin = appointmentSubqueryUser.join(User_.specialistAppointments);
+        Join<Appointment, Address> appointmentAddressJoin = appointmentUserJoin.join(Appointment_.address);
 
         Subquery<Long> availableTimeAddressSubquerry = criteria.subquery(Long.class);
         Root<User> availableTimeAddressSubquerryUser = availableTimeAddressSubquerry.correlate(user);
@@ -73,28 +78,27 @@ public class SpecialistSearchImpl implements SpecialistSearch {
         Root<SpecialistAvailableTime> subAvailableTime = availableTimeSubquerry.from(SpecialistAvailableTime.class);
         Join<SpecialistAvailableTime, User> availableTimeSubUser = subAvailableTime.join(SpecialistAvailableTime_.specialist);
 
-
         Predicate[] predicates = CriteriaPredicate.builder()
                 // Find specialists who have this email
-                .add(specialistFilter.getEmail(), obj -> cb.like(user.get(email), obj))
+                .addStringWithPercentage(specialistFilter.getEmail(), obj -> cb.like(cb.lower(user.get(email)), obj))
                 // Find specialists who have this first name
-                .add(specialistFilter.getFirstName(), obj -> cb.like(userInfo.get(UserInfo_.firstName), obj))
+                .addStringWithPercentage(specialistFilter.getFirstName(), obj -> cb.like(cb.lower(user.get(firstName)), obj))
                 // Find specialists who have this last name
-                .add(specialistFilter.getLastName(), obj -> cb.like(userInfo.get(UserInfo_.lastName), obj))
+                .addStringWithPercentage(specialistFilter.getLastName(), obj -> cb.like(cb.lower(user.get(lastName)), obj))
+                // Find specialists who have this mobile phone
+                .addStringWithPercentage(specialistFilter.getMobilePhoneNumber(), obj -> cb.like(user.get(mobilePhoneNumber), obj))
                 // Find specialists who have this gender
                 .add(specialistFilter.getGender(), obj -> cb.equal(userInfo.get(UserInfo_.gender), obj))
                 // Find specialists who have birthday before this date
                 .add(specialistFilter.getBirthdayBeforeDate(), obj -> cb.lessThan(userInfo.get(UserInfo_.birthday), obj))
                 // Find specialists who have birthday after this date
-                .add(specialistFilter.getBirthdayBeforeDate(), obj -> cb.greaterThan(userInfo.get(UserInfo_.birthday), obj))
+                .add(specialistFilter.getBirthdayAfterDate(), obj -> cb.greaterThan(userInfo.get(UserInfo_.birthday), obj))
                 // Find specialists who were registered before this date
-                .add(specialistFilter.getRegisteredBeforeDate(), obj -> cb.lessThan(userInfo.get(UserInfo_.registeredAt), LocalDateTime.of(obj, LocalTime.MAX)))
+                .add(specialistFilter.getRegisteredBeforeDate(), obj -> cb.lessThan(userInfo.get(UserInfo_.registeredAt), LocalDateTime.of(obj, LocalTime.MIN)))
                 // Find specialists who have registered after this date
-                .add(specialistFilter.getRegisteredBeforeDate(), obj -> cb.greaterThan(userInfo.get(UserInfo_.registeredAt), LocalDateTime.of(obj, LocalTime.MIN)))
-                // Find specialists who have this mobile phone
-                .add(specialistFilter.getMobilePhoneNumber(), obj -> cb.like(user.get(mobilePhoneNumber), obj))
-                // Find specialist who have reviews
-                .add(specialistFilter.getHasReviews(), obj -> { // ВОТ ЭТО СМОТРИ!
+                .add(specialistFilter.getRegisteredAfterDate(), obj -> cb.greaterThan(userInfo.get(UserInfo_.registeredAt), LocalDateTime.of(obj, LocalTime.MIN)))
+                // Find specialists who have reviews
+                .add(specialistFilter.getHasReviews(), obj -> {
                     Subquery<Long> sub = reviewSubquery.select(cb.count(subReview.get(Review_.id)))
                             .where(cb.equal(user.get(id), reviewSubUser.get(id)));
                     return cb.greaterThan(sub, 0L);
@@ -103,31 +107,25 @@ public class SpecialistSearchImpl implements SpecialistSearch {
                 .add(specialistFilter.getServiceNames(), serviceNames -> cb.ge(serviceSubquery.select(cb.count(serviceJoin.get(Service_.name)))
                         .where(serviceJoin.get(Service_.name).in(serviceNames)), serviceNames.size()))
                 // Find specialist who have appointments at these addresses
-                .add(specialistFilter.getAddressWhereHaveAppointments(), addresses -> cb.ge(appointmentAddressSubquery.select(cb.count(appointmentAddressJoin.get(Address_.addressName)))
-                        .where(appointmentAddressJoin.get(Address_.addressName).in(addresses)), addresses.size()))
+                .add(specialistFilter.getAddressIdWhereHaveAppointments(), addressIds -> cb.ge(appointmentSubquery.select(cb.count(appointmentAddressJoin.get(Address_.addressName)))
+                        .where(appointmentAddressJoin.get(Address_.id).in(addressIds)), addressIds.size()))
                 //  Find specialist who have available time in these days
-                .add(specialistFilter.getAvailableDates(), dates -> {
-                            Subquery<Long> sub = availableTimeSubquerry.select(cb.count(subAvailableTime.get(SpecialistAvailableTime_.date).in(dates)))
-                                    .where(cb.equal(user.get(id), availableTimeSubUser.get(id)));
-                            return cb.greaterThan(sub, Integer.toUnsignedLong(dates.size()));
-                        }
+                .add(specialistFilter.getAvailableDates(), dates -> cb.ge(availableTimeSubquery.select(cb.count(availableTimeJoin.get(SpecialistAvailableTime_.date)))
+                        .where(availableTimeJoin.get(SpecialistAvailableTime_.date).in(dates)), dates.size())
                 )
                 //  Find specialist who have available time in these hours
-                .add(specialistFilter.getAvailableTimes(), times -> {
-                            Subquery<Long> sub = availableTimeSubquerry.select(cb.count(subAvailableTime.get(SpecialistAvailableTime_.time).in(times)))
-                                    .where(cb.equal(user.get(id), availableTimeSubUser.get(id)));
-                            return cb.greaterThan(sub, Integer.toUnsignedLong(times.size()));
-                        }
+                .add(specialistFilter.getAvailableTimes(), times -> cb.ge(availableTimeSubquery.select(cb.count(availableTimeJoin.get(SpecialistAvailableTime_.time)))
+                        .where(availableTimeJoin.get(SpecialistAvailableTime_.time).in(times)), times.size())
                 )
                 //  Find specialist who have available time at these addresses
-                .add(specialistFilter.getAvailableAddresses(), addresses -> cb.ge(availableTimeAddressSubquerry.select(cb.count(availableTimeAddressJoin.get(Address_.addressName)))
-                        .where(availableTimeAddressJoin.get(Address_.addressName).in(addresses)), addresses.size()))
+                .add(specialistFilter.getAvailableAddressesId(), addressIds -> cb.ge(availableTimeAddressSubquerry.select(cb.count(availableTimeAddressJoin.get(Address_.addressName)))
+                        .where(availableTimeAddressJoin.get(Address_.id).in(addressIds)), addressIds.size()))
                 //  Find specialist who provides services with price grater than minPrice
-
                 .build();
 
         criteria.where(predicates)
-                .groupBy(user.get(id));
+                .groupBy(user.get(id))
+                .getRestriction();
         return entityManager.createQuery(criteria)
                 .getResultList();
     }

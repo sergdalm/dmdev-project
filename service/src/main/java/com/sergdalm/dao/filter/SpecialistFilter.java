@@ -1,6 +1,5 @@
 package com.sergdalm.dao.filter;
 
-import com.sergdalm.entity.Address;
 import com.sergdalm.entity.Gender;
 import com.sergdalm.entity.ServiceName;
 import lombok.Builder;
@@ -22,11 +21,10 @@ public class SpecialistFilter {
     LocalDate birthdayBeforeDate;
     LocalDate registeredBeforeDate;
     LocalDate registeredAfterDate;
-    boolean hasDescription;
     Boolean hasReviews;
     List<ServiceName> serviceNames;
-    List<Address> addressWhereHaveAppointments;
+    List<Integer> addressIdWhereHaveAppointments;
     List<LocalDate> availableDates;
     List<LocalTime> availableTimes;
-    List<Address> availableAddresses;
+    List<Integer> availableAddressesId;
 }

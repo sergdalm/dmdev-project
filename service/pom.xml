@@ -12,7 +12,8 @@
     <artifactId>service</artifactId>
 
     <properties>
-        <snakeyaml.version>1.33</snakeyaml.version>
+        <spring-security-core.version>5.7.5</spring-security-core.version>
+        <postgresql.verion>42.3.8</postgresql.verion>
     </properties>
 
     <dependencies>
@@ -31,6 +32,8 @@
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
 
+<!--        This dependency has vulnerability in transitive dependency org.yaml.snakeyaml
+            in its latest version (1.33) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -58,6 +61,16 @@
         </dependency>
 
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.thymeleaf.extras</groupId>
+            <artifactId>thymeleaf-extras-springsecurity5</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>org.liquibase</groupId>
             <artifactId>liquibase-core</artifactId>
         </dependency>
@@ -67,9 +80,12 @@
             <artifactId>querydsl-apt</artifactId>
         </dependency>
 
+<!--        This dependency specified with version because Spring boot postgresql transitive dependency
+            has vulnerability (version 42.3.7)-->
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
+            <version>${postgresql.verion}</version>
         </dependency>
 
         <dependency>
@@ -88,13 +104,10 @@
             <scope>test</scope>
         </dependency>
 
-        <!--        This dependency was added to solve vulnerability in
-                    transitive vulnerable dependency of spring-boot-starter-test -->
         <dependency>
-            <groupId>org.yaml</groupId>
-            <artifactId>snakeyaml</artifactId>
-            <version>${snakeyaml.version}</version>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-core</artifactId>
+            <version>${spring-security-core.version}</version>
         </dependency>
-
     </dependencies>
 </project>

@@ -13,11 +13,10 @@ public class DtoUtill {
             .mobilePhoneNumber(EntityUtil.getSpecialistDmitry().getMobilePhoneNumber())
             .role(EntityUtil.getSpecialistDmitry().getRole())
             .password(EntityUtil.getSpecialistDmitry().getPassword())
-            .registeredAt(EntityUtil.getSpecialistDmitry().getUserInfo().getRegisteredAt())
             .gender(EntityUtil.getSpecialistDmitry().getUserInfo().getGender())
             .birthday(EntityUtil.getSpecialistDmitry().getUserInfo().getBirthday())
-            .firstName(EntityUtil.getSpecialistDmitry().getUserInfo().getFirstName())
-            .lastName(EntityUtil.getSpecialistDmitry().getUserInfo().getLastName())
+            .firstName(EntityUtil.getSpecialistDmitry().getFirstName())
+            .lastName(EntityUtil.getSpecialistDmitry().getLastName())
             .description(EntityUtil.getSpecialistDmitry().getUserInfo().getDescription())
             .build();
 
@@ -26,10 +25,9 @@ public class DtoUtill {
             .mobilePhoneNumber("+7(931)493-48-48")
             .role(Role.SPECIALIST)
             .password("9jie3e")
-            .registeredAt(EntityUtil.getSpecialistDmitry().getUserInfo().getRegisteredAt())
             .gender(Gender.MALE)
             .birthday(EntityUtil.getSpecialistDmitry().getUserInfo().getBirthday())
-            .firstName(EntityUtil.getSpecialistDmitry().getUserInfo().getFirstName())
+            .firstName(EntityUtil.getSpecialistDmitry().getFirstName())
             .lastName("Cheryomuhin")
             .description(EntityUtil.getSpecialistDmitry().getUserInfo().getDescription())
             .build();

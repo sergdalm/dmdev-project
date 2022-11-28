@@ -15,7 +15,6 @@ import com.sergdalm.mapper.UserWithInfoMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.Optional;
@@ -23,7 +22,7 @@ import java.util.Optional;
 @AllArgsConstructor
 @Service
 @Transactional(readOnly = true)
-public class UserService implements GenericService<Integer, UserCreateEditDto, UserWithInfoDto> {
+public class UserService implements CrudServiceWithDoubleReadDto<Integer, UserCreateEditDto, UserReadDto, UserWithInfoDto> {
 
     private final UserRepository userRepository;
     private final UserInfoRepository userInfoRepository;
@@ -34,9 +33,9 @@ public class UserService implements GenericService<Integer, UserCreateEditDto, U
     private final UserCreateEditToUserInfoMapper userCreateEditToUserInfoMapper;
 
     @Override
-    public List<UserWithInfoDto> findAll() {
+    public List<UserReadDto> findAll() {
         return userRepository.findAll().stream()
-                .map(userWithInfoMapper::mapToDto)
+                .map(userReadMapper::mapToDto)
                 .toList();
     }
 
@@ -46,24 +45,14 @@ public class UserService implements GenericService<Integer, UserCreateEditDto, U
                 .toList();
     }
 
-    public List<UserReadDto> findAllReadDto() {
-        return userRepository.findAll().stream()
-                .map(userReadMapper::mapToDto)
-                .toList();
-    }
-
     @Override
     public Optional<UserWithInfoDto> findById(Integer id) {
         return userRepository.findById(id)
                 .map(userWithInfoMapper::mapToDto);
     }
 
-    public Optional<UserReadDto> findByIdReadDto(Integer id) {
-        return userRepository.findById(id)
-                .map(userReadMapper::mapToDto);
-    }
-
     @Transactional
+    @Override
     public UserWithInfoDto create(UserCreateEditDto userDto) {
         return Optional.of(userDto)
                 .map(newUserDto -> {
@@ -107,7 +96,7 @@ public class UserService implements GenericService<Integer, UserCreateEditDto, U
     public Optional<byte[]> findAvatar(Integer id) {
         return userInfoRepository.findById(id)
                 .map(UserInfo::getImage)
-                .filter(StringUtils::hasText)
+                .filter(org.springframework.util.StringUtils::hasText)
                 .flatMap(imageService::get);
     }
 }

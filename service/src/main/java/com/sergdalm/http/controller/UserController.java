@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -41,8 +42,16 @@ public class UserController {
     }
 
     @PostMapping
-    public String create(@Validated UserCreateEditDto user, RedirectAttributes redirectAttributes) {
-        return "redirect:/users/" + userService.create(user).getId();
+    public String create(@Validated UserCreateEditDto user,
+                         BindingResult bindingResult,
+                         RedirectAttributes redirectAttributes) {
+        if (bindingResult.hasErrors()) {
+            redirectAttributes.addFlashAttribute("errors", bindingResult.getAllErrors());
+            redirectAttributes.addFlashAttribute("user", user);
+            return "redirect:/users/registration";
+        }
+        userService.create(user);
+        return "redirect:/login";
     }
 
     @PostMapping("/{id}/update")
@@ -59,5 +68,4 @@ public class UserController {
         }
         return "redirect:/users";
     }
-
 }

@@ -1,15 +1,12 @@
 --liquibase formatted sql
 
 --changeset asergienko:1
-SELECT 'CREATE DATABASE massage_project'
-WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'massage_project');
-
 CREATE SCHEMA IF NOT EXISTS massage;
 
 SET search_path TO massage;
 
 --changeset asergienko:2
-CREATE TABLE massage.users
+CREATE TABLE users
 (
     id                  SERIAL PRIMARY KEY,
     email               VARCHAR(128) UNIQUE NOT NULL,

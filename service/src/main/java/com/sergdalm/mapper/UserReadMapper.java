@@ -14,6 +14,8 @@ public class UserReadMapper implements ReadMapper<User, UserReadDto> {
                 .email(entity.getEmail())
                 .mobilePhoneNumber(entity.getMobilePhoneNumber())
                 .role(entity.getRole())
+                .firstName(entity.getFirstName())
+                .lastName(entity.getLastName())
                 .build();
     }
 }

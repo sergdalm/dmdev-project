@@ -29,14 +29,14 @@ public class EntityUtil {
                 .password("fj04ff")
                 .mobilePhoneNumber("+7(911)332-65-23")
                 .role(Role.ADMINISTRATOR)
+                .firstName("Alex")
+                .lastName("S")
                 .build();
     }
 
     public static UserInfo getAdministratorUserInfo() {
         return UserInfo.builder()
                 .id(3)
-                .firstName("Alex")
-                .lastName("S")
                 .gender(Gender.FEMALE)
                 .birthday(LocalDate.of(1993, 7, 12))
                 .gender(Gender.FEMALE)
@@ -51,14 +51,14 @@ public class EntityUtil {
                 .mobilePhoneNumber("+7(911)849-93-13")
                 .password("28ff")
                 .role(Role.CLIENT)
+                .firstName("Svetlana")
+                .lastName("Cheremuhina")
                 .build();
     }
 
     public static UserInfo getClientSvetlanaUserInfo() {
         return UserInfo.builder()
                 .id(4)
-                .firstName("Svetlana")
-                .lastName("Cheremuhina")
                 .gender(Gender.FEMALE)
                 .birthday(LocalDate.of(1955, 4, 24))
                 .registeredAt(LocalDateTime.of(2022, 11, 14, 15, 24))
@@ -73,14 +73,14 @@ public class EntityUtil {
                 .role(Role.CLIENT)
                 .password("23d0i9")
                 .userInfo(getClientMarinaUserInfo())
+                .firstName("Marina")
+                .lastName("Ivanova")
                 .build();
     }
 
     public static UserInfo getClientMarinaUserInfo() {
         return UserInfo.builder()
                 .id(5)
-                .firstName("Marina")
-                .lastName("Ivanova")
                 .gender(Gender.FEMALE)
                 .birthday(LocalDate.of(1990, 7, 20))
                 .registeredAt(LocalDateTime.of(2022, 11, 15, 13, 0))
@@ -94,14 +94,14 @@ public class EntityUtil {
                 .mobilePhoneNumber("+7(911)214-05-91")
                 .role(Role.CLIENT)
                 .password("wc09jn")
+                .firstName("Katya")
+                .lastName("Petrova")
                 .build();
     }
 
     public static UserInfo getClientKatyaUserInfo() {
         return UserInfo.builder()
                 .id(6)
-                .firstName("Katya")
-                .lastName("Petrova")
                 .gender(Gender.FEMALE)
                 .birthday(LocalDate.of(1995, 9, 1))
                 .registeredAt(LocalDateTime.of(2022, 11, 16, 13, 15))
@@ -115,14 +115,14 @@ public class EntityUtil {
                 .mobilePhoneNumber("+7(911)749-94-28")
                 .password("6403uh")
                 .role(Role.SPECIALIST)
+                .firstName("Dmitry")
+                .lastName("Cheremuhin")
                 .build();
     }
 
     public static UserInfo getSpecialistDmitryUserInfo() {
         return UserInfo.builder()
                 .id(1)
-                .firstName("Dmitry")
-                .lastName("Cheremuhin")
                 .gender(Gender.MALE)
                 .birthday(LocalDate.of(1975, 5, 25))
                 .description("Work experience: 3 years")
@@ -137,14 +137,14 @@ public class EntityUtil {
                 .mobilePhoneNumber("+7(911)493-09-02")
                 .password("093jrnd")
                 .role(Role.SPECIALIST)
+                .firstName("Natali")
+                .lastName("Kremneva")
                 .build();
     }
 
     public static UserInfo getSpecialistNataliUserInfo() {
         return UserInfo.builder()
                 .id(2)
-                .firstName("Natali")
-                .lastName("Kremneva")
                 .gender(Gender.FEMALE)
                 .birthday(LocalDate.of(1983, 4, 29))
                 .description("Work experience: 10 years")

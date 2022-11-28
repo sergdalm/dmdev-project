@@ -10,7 +10,15 @@ spring:
       show_sql: true
       format_sql: true
       default_schema: massage
+#  liquibase:
+#    url: jdbc:postgresql://localhost:5432/massage_project
+#    user: postgres
+#    password: postgres
 
 logging:
   level:
     root: INFO
+
+app:
+  image:
+    bucket: Users/alexandria/IdeaProjects/dmdev-project/service/images;

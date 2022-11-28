@@ -1,7 +1,6 @@
 package com.sergdalm.dao;
 
 import com.querydsl.core.Tuple;
-import com.sergdalm.entity.ServiceName;
 import com.sergdalm.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

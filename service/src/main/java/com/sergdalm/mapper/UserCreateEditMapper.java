@@ -14,6 +14,8 @@ public class UserCreateEditMapper implements CreateEditMapper<User, UserCreateEd
                 .mobilePhoneNumber(dto.getMobilePhoneNumber())
                 .password(dto.getPassword())
                 .role(dto.getRole())
+                .firstName(dto.getFirstName())
+                .lastName(dto.getLastName())
                 .build();
     }
 
@@ -23,6 +25,8 @@ public class UserCreateEditMapper implements CreateEditMapper<User, UserCreateEd
         entity.setMobilePhoneNumber(dto.getMobilePhoneNumber());
         entity.setPassword(dto.getPassword());
         entity.setRole(dto.getRole());
+        entity.setFirstName(dto.getFirstName());
+        entity.setLastName(dto.getLastName());
         return entity;
     }
 }
