@@ -1,10 +1,10 @@
 INSERT INTO users(id, email, mobile_phone_number, role, password, first_name, last_name)
-VALUES (1, 'dmitry@gmail.com', '+7(911)749-94-28', 'SPECIALIST', '6403uh', 'Dmitry', 'Cheremuhin'),
-       (2, 'natali@gmail.com', '+7(911)493-09-02', 'SPECIALIST', '093jrnd', 'Natali', 'Kremneva'),
-       (3, 'alex@gmail.com', '+7(911)332-65-23', 'ADMINISTRATOR', 'fj04ff', 'Alex', 'S'),
-       (4, 'svetlana@gmail.com', '+7(911)849-93-13', 'CLIENT', '28ff', 'Svetlana', 'Cheremuhina'),
-       (5, 'marina@gmail.com', '+7(911)492-06-02', 'CLIENT', '23d0i9', 'Marina', 'Ivanova'),
-       (6, 'katya@gmail.com', '+7(911)214-05-91', 'CLIENT', 'wc09jn', 'Katya', 'Petrova');
+VALUES (1, 'dmitry@gmail.com', '+7(911)749-94-28', 'SPECIALIST', '{noop}6403uh', 'Dmitry', 'Cheremuhin'),
+       (2, 'natali@gmail.com', '+7(911)493-09-02', 'SPECIALIST', '{noop}093jrnd', 'Natali', 'Kremneva'),
+       (3, 'alex@gmail.com', '+7(911)332-65-23', 'ADMINISTRATOR', '{noop}fj04ff', 'Alex', 'S'),
+       (4, 'svetlana@gmail.com', '+7(911)849-93-13', 'CLIENT', '{noop}28ff', 'Svetlana', 'Cheremuhina'),
+       (5, 'marina@gmail.com', '+7(911)492-06-02', 'CLIENT', '{noop}23d0i9', 'Marina', 'Ivanova'),
+       (6, 'katya@gmail.com', '+7(911)214-05-91', 'CLIENT', '{noop}wc09jn', 'Katya', 'Petrova');
 
 SELECT SETVAL('users_id_seq', (SELECT MAX(id) FROM users));
 

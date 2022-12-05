@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title><span th:text="#{registration.registration}">Registration</span></title>
+</head>
+<body>
+    <form th:action="@{/users}" enctype="multipart/form-data" method="post" th:object="${user}">
+        <label for="email"><span th:text="#{login.email}">Email:</span>
+            <input id="email" type="text" name="email" th:value="*{email}">
+        </label><br>
+        <label for="phone"><span th:text="#{registration.mobilePhone}">Mobile phone number:</span>
+            <input id="phone" type="text" name="phone" th:value="*{mobilePhoneNumber}">
+        </label><br>
+        <label for="rowPassword"><span th:text="#{login.password}">Password:</span>
+            <input id="rowPassword" type="password" name="rowPassword">
+        </label><br>
+        <label for="firstname"><span th:text="#{registration.firstName}">First name:</span>
+            <input id="firstname" type="text" name="firstname" th:value="*{firstName}">
+        </label><br>
+        <label for="lastname"><span th:text="#{registration.lastName}">Last name:</span>
+            <input id="lastname" type="text" name="lastname" th:value="*{lastName}">
+        </label><br>
+        <span th:text="#{registration.gender}">Gender:</span>
+        <div th:each="gender : ${genders}">
+            <input th:id="${gender}" type="radio" name="gender" th:value="${gender}" th:checked="${gender == user.gender}">
+            <label th:for="${gender}" th:text="${gender}">Gender name</label>
+        </div>
+        <label for="image"><span th:text="#{registration.image}">Image:</span>
+            <input id="image" type="file" name="image">
+        </label><br>
+        <span th:text="#{registration.role}">Role:</span>
+        <div th:each="role : ${roles}">
+            <input th:id="${role}" type="radio" name="role" th:value="${role}" th:checked="${role == user.role}">
+            <label th:for="${role}" th:text="${role}">Role name</label>
+        </div>
+        <label for="birthday"><span th:text="#{registration.birthday}">Birthday:</span>
+            <input id="birthday" type="date" name="birthday" th:value="*{birthday}">
+        </label><br>
+        <label for="description"><span th:text="#{registration.description}">Description:</span>
+            <input id="description" type="text" name="description" th:value="*{description}">
+        </label><br>
+        <button type="submit"><span th:text="#{registration.register}">Register</span></button>
+    </form>
+    <div th:if="${errors}">
+        <p style="color: red" th:each="error : ${errors}" th:text="${error.defaultMessage}"><span th:text="#{registration.errorMassages}">Error massages</span></p>
+    </div>
+</body>
+</html>

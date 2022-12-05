@@ -6,6 +6,5 @@ import com.sergdalm.entity.User;
 import java.util.List;
 
 public interface SpecialistSearch {
-
-    List<User> findSpecialistsByFilter(SpecialistFilter specialistFilter);
+    List<User> findAll(SpecialistFilter specialistFilter);
 }

@@ -33,7 +33,7 @@ class UserRepositoryIT extends IntegrationTestBase {
     void findSpecialistsByFilter(String testDisplayName,
                                  SpecialistFilter filter,
                                  List<String> expectedList) {
-        List<User> actualResult = userRepository.findSpecialistsByFilter(filter);
+        List<User> actualResult = userRepository.findAll(filter);
         assertThat(actualResult).hasSize(expectedList.size());
         List<String> actualEmailList = actualResult.stream()
                 .map(User::getEmail)
@@ -76,16 +76,16 @@ class UserRepositoryIT extends IntegrationTestBase {
                                 .gender(Gender.FEMALE)
                                 .build(),
                         List.of("natali@gmail.com", "alex@gmail.com", "svetlana@gmail.com", "marina@gmail.com", "katya@gmail.com")),
-                // Find specialist who born before certain date
-                Arguments.of("birthday before date",
+                // Find specialist who are younger than maxAge
+                Arguments.of("minimum age",
                         SpecialistFilter.builder()
-                                .birthdayBeforeDate(LocalDate.of(1980, 1, 1))
+                                .minAge(LocalDate.now().getYear() - 1980)
                                 .build(),
                         List.of("dmitry@gmail.com", "svetlana@gmail.com")),
-                // Find specialist who born after certain date
-                Arguments.of("birthday after date",
+                // Find specialist who are older than maxAge
+                Arguments.of("maximum age",
                         SpecialistFilter.builder()
-                                .birthdayAfterDate(LocalDate.of(1990, 1, 1))
+                                .maxAge(LocalDate.now().getYear() - 1990)
                                 .build(),
                         List.of("alex@gmail.com", "marina@gmail.com", "katya@gmail.com")),
                 // Find specialist who registered before certain date

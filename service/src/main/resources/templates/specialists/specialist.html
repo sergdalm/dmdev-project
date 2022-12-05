@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Specialist</title>
+    <span th:text="#{specialist.specialist}">Specialist</span>
+</head>
+<body>
+    <div th:if="${specialist}">
+        <img th:src="@{/api/v1/users/{userId}/avatar(userId=${user.id})}" alt="User image">
+        <span th:text="${specialist.fullName}">Specialist full name</span>
+        <span th:text="${specialist.description}">Specialist description</span>
+    </div>
+</body>
+</html>

@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Users</title>
+</head>
+<body>
+    <div th:insert="~{fragment :: header}"></div>
+    <div th:each="specialist : ${specialists}">
+        <a th:href="@{'/users/' + ${specialist.id}}" th:text="|${specialist.firstName} ${specialist.lastName}|">User</a>
+    </div>
+</body>
+</html>

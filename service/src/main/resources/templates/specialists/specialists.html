@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title><span th:text="#{specialists.specialists}">Specialists</span></title>
+</head>
+<body>
+    <div th:insert="~{fragment :: header}"></div>
+
+    <div th:switch="${#authentication.principal.role}">
+        <div th:case="'ADMIN'">
+            <div th:insert="~{search :: admin}"></div>
+        </div>
+        <div th:case="'CLIENT'">
+            <div th:insert="~{search :: client}"></div>
+        </div>
+    </div>
+
+    <div th:each="specialist : ${specialists}">
+        <div th:if="${specialist.image}">
+            <img th:src="@{/api/v1/users/{userId}/avatar(userId=${specialist.id})}" alt="User image">
+        </div>
+        <a th:href="@{'/users/' + ${specialist.id}}" th:text="${specialist.fullName}">Specialist</a>
+    </div>
+</body>
+</html>

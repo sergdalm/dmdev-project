@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
 @Value
 @Builder
 public class UserInfoCreateDto {
-
     String firstName;
     String lastName;
     Gender gender;

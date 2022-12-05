@@ -15,7 +15,7 @@ import java.util.Optional;
 @Service
 @Transactional
 @AllArgsConstructor
-public class ServiceService implements GenericService<Integer, ServiceCreateDto, ServiceReadDto> {
+public class ServiceService implements CrudServiceWithSingleReadDto<Integer, ServiceCreateDto, ServiceReadDto> {
 
     private final ServiceRepository serviceRepository;
     private final ServiceCreateMapper serviceCreateMapper;

@@ -5,6 +5,7 @@ import com.sergdalm.entity.Role;
 import lombok.Builder;
 import lombok.Value;
 import lombok.experimental.FieldNameConstants;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -26,7 +27,7 @@ public class UserCreateEditDto {
 
     @NotEmpty
     @NotBlank
-    String password;
+    String rowPassword;
 
     @NotEmpty
     @NotBlank
@@ -42,4 +43,6 @@ public class UserCreateEditDto {
     LocalDate birthday;
 
     String description;
+
+    MultipartFile image;
 }

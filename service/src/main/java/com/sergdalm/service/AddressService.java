@@ -15,12 +15,11 @@ import java.util.Optional;
 @Service
 @AllArgsConstructor
 @Transactional(readOnly = true)
-public class AddressService implements GenericService<Integer, AddressCreateDto, AddressReadDto> {
+public class AddressService implements CrudServiceWithSingleReadDto<Integer, AddressCreateDto, AddressReadDto> {
 
     private final AddressRepository addressRepository;
     private final AddressCreateMapper addressCreateMapper;
     private final AddressReadMapper addressReadMapper;
-
 
     @Override
     public List<AddressReadDto> findAll() {

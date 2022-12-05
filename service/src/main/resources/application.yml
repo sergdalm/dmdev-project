@@ -5,15 +5,18 @@ spring:
     password: postgres
     driver-class-name: org.postgresql.Driver
 
+  messages:
+    basename: messages
+
   jpa:
     properties.hibernate:
       show_sql: true
       format_sql: true
       default_schema: massage
-#  liquibase:
-#    url: jdbc:postgresql://localhost:5432/massage_project
-#    user: postgres
-#    password: postgres
+
+  mvc:
+    format:
+      date: iso
 
 logging:
   level:

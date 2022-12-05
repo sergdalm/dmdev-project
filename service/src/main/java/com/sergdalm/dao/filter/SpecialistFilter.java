@@ -17,8 +17,8 @@ public class SpecialistFilter {
     String firstName;
     String lastName;
     Gender gender;
-    LocalDate birthdayAfterDate;
-    LocalDate birthdayBeforeDate;
+    Integer minAge;
+    Integer maxAge;
     LocalDate registeredBeforeDate;
     LocalDate registeredAfterDate;
     Boolean hasReviews;

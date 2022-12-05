@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title><span th:text="#{specialists.search.search}">Search</span></title>
+</head>
+<body>
+<div th:fragment="client">
+    <form action="/specialists">
+        <label for="firstName"><span th:text="#{registration.firstName}">First name</span>
+            <input id="firstName" type="text" name="firstName" th:value="${filter.firstName()}">
+        </label>
+        <label for="lastName"><span th:text="#{registration.lastName}">Last name</span>
+            <input id="lastName" type="text" name="lastName" th:value="${filter.lastName()}">
+        </label>
+        <span th:text="#{registration.gender}">Gender</span>
+        <div th:each="gender : ${genders}">
+            <input th:id="${gender}" type="radio" name="gender" th:value="${gender}" th:value="${filter.gender()}">
+            <label th:for="${gender}" th:text="${gender}"><span th:text="#{registration.genderName}">Gender name</span></label>
+            <label for="registeredAfterDate">Before date:
+                <input id="registeredAfterDate" type="date" name="registeredAfterDate"
+                       th:value="${filter.registeredAfterDate()}">
+            </label>
+        </div>
+        <div>
+            <input type="checkbox" id="hasReviews" name="hasReviews" th:checked="${filter.hasReviews()}">
+            <label for="hasReviews"><span th:text="#{specialists.search.hasReview}">Has reviews</span></label>
+        </div>
+        <span th:text="#{specialists.search.services}">Services</span>
+        <select id="serviceNames" th:field="*{serviceNames}" multiple="multiple">
+            <option th:each="serviceName : ${serviceNames}"
+                    th:value="${{serviceName}}"
+                    th:text="${serviceName}">
+                <span th:text="#{specialists.search.serviceName}">Service Name</span>
+            </option>
+        </select>>
+        <span th:text="#{specialists.search.addressWithAppointments}">Addresses where specialist has appointments:</span>
+        <select id="address" th:field="*{adresses}" multiple="multiple">
+            <option th:each="serviceName : ${serviceNames}"
+                    th:value="${{address}}"
+                    th:text="${address}">
+                <span th:text="#{specialists.search.addressName}">Address Name</span>
+            </option>
+        </select>>
+
+        <!--        <div>-->
+        <!--            <label for="page">Page:-->
+        <!--                <input id="page" type="number" name="page" th:value="${users.metadata.page}">-->
+        <!--            </label>-->
+        <!--            <label for="size">Size:-->
+        <!--                <input id="size" type="number" name="size" th:value="${users.metadata.size}">-->
+        <!--            </label>-->
+        <!--        </div>-->
+        <button type="submit">Search</button>
+    </form>
+</div>
+
+<div th:fragment="admin">
+    <form action="/specialists">
+        <label for="email">Email:
+            <input id="email" type="text" name="email" th:value="${filter.email()}">
+        </label>
+        <label for="mobilePhone">Mobile phone:
+            <input id="mobilePhone" type="text" name="mobilePhone" th:value="${filter.mobilePhoneNumber()}">
+        </label>
+        <label for="firstName">First name:
+            <input id="firstName" type="text" name="firstName" th:value="${filter.firstName()}">
+        </label>
+        <label for="lastName">Last name:
+            <input id="lastname" type="text" name="lastName" th:value="${filter.lastName()}">
+        </label>
+        <div th:each="gender : ${genders}">
+            <input th:id="${gender}" type="radio" name="gender" th:value="${gender}" th:value="${filter.gender()}">
+            <label th:for="${gender}" th:text="${gender}">Gender name</label> <label for="registeredAfterDate">Before
+            date:
+            <input id="registeredAfterDate" type="date" name="registeredAfterDate"
+                   th:value="${filter.registeredAfterDate()}">
+        </label>
+        </div>
+        Registration date
+        <label for="registeredBeforeDate">After date:
+            <input id="registeredBeforeDate" type="date" name="registeredBeforeDate"
+                   th:value="${filter.registeredBeforeDate()}">
+        </label>
+        <label for="maxAge">Maximum age:
+            <input id="maxAge" type="date" name="maxAge" th:value="${filter.maxAge()}">
+        </label>
+        <label for="minAge">Minimum age:
+            <input id="minAge" type="date" name="minAge" th:value="${filter.minAge()}">
+        </label>
+        <div>
+            <input type="checkbox" id="hasReviews" name="hasReviews" th:checked="${filter.hasReviews()}">
+            <label for="hasReviews">Has reviews</label>
+        </div>
+        Services:
+        <select id="serviceNames" th:field="*{serviceNames}" multiple="multiple">
+            <option th:each="serviceName : ${serviceNames}"
+                    th:value="${{serviceName}}"
+                    th:text="${serviceName}">
+                Service Name
+            </option>
+        </select>>
+        Addresses where specialist has appointments:
+        <select id="address" th:field="*{adresses}" multiple="multiple">
+            <option th:each="serviceName : ${serviceNames}"
+                    th:value="${{address}}"
+                    th:text="${address}">
+                Address name
+            </option>
+        </select>>
+        <button type="submit">Search</button>
+    </form>
+</div>
+</body>
+</html>

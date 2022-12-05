@@ -28,6 +28,7 @@ import javax.persistence.criteria.ListJoin;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Subquery;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
@@ -44,7 +45,7 @@ public class SpecialistSearchImpl implements SpecialistSearch {
 
     private final EntityManager entityManager;
 
-    public List<User> findSpecialistsByFilter(SpecialistFilter specialistFilter) {
+    public List<User> findAll(SpecialistFilter specialistFilter) {
 
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<User> criteria = cb.createQuery(User.class);
@@ -89,10 +90,10 @@ public class SpecialistSearchImpl implements SpecialistSearch {
                 .addStringWithPercentage(specialistFilter.getMobilePhoneNumber(), obj -> cb.like(user.get(mobilePhoneNumber), obj))
                 // Find specialists who have this gender
                 .add(specialistFilter.getGender(), obj -> cb.equal(userInfo.get(UserInfo_.gender), obj))
-                // Find specialists who have birthday before this date
-                .add(specialistFilter.getBirthdayBeforeDate(), obj -> cb.lessThan(userInfo.get(UserInfo_.birthday), obj))
-                // Find specialists who have birthday after this date
-                .add(specialistFilter.getBirthdayAfterDate(), obj -> cb.greaterThan(userInfo.get(UserInfo_.birthday), obj))
+                // Find specialists who are younger than maxAge
+                .add(specialistFilter.getMaxAge(), maxAge -> cb.lessThan(userInfo.get(UserInfo_.birthday), LocalDate.of(LocalDate.now().getYear() - maxAge, 1, 1)))
+                // Find specialists who are older than minAge
+                .add(specialistFilter.getMinAge(), minAge -> cb.greaterThan(userInfo.get(UserInfo_.birthday), LocalDate.of(LocalDate.now().getYear() - minAge, 12, 31)))
                 // Find specialists who were registered before this date
                 .add(specialistFilter.getRegisteredBeforeDate(), obj -> cb.lessThan(userInfo.get(UserInfo_.registeredAt), LocalDateTime.of(obj, LocalTime.MIN)))
                 // Find specialists who have registered after this date

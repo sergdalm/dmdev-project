@@ -2,43 +2,45 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>User</title>
+    <title><span th:text="#{user.user}">User</span></title>
 </head>
 <body>
     <form th:action="@{/users/{userId}/update(userId=${user.id})}" method="post" th:object="${user}">
-        <label for="email">Email:
+        <label for="email"><span th:text="#{login.email}">Email:</span>
             <input id="email" type="text" name="email" th:value="*{email}">
         </label><br>
-        <label for="mobilePhoneNumber">Phone number:
+        <label for="mobilePhoneNumber"><span th:text="#{registration.mobilePhone}">Mobile phone number:</span>
             <input id="mobilePhoneNumber" type="text" name="mobilePhoneNumber" th:value="*{mobilePhoneNumber}">
         </label><br>
-        <label for="firstName">First name:
+        <label for="firstName"><span th:text="#{registration.firstName}">First name:</span>
             <input id="firstName" type="text" name="firstName" th:value="*{firstName}">
         </label><br>
-        <label for="lastName">Last name:
+        <label for="lastName"><span th:text="#{registration.lastName}">Last name:</span>
             <input id="lastName" type="text" name="lastName" th:value="*{lastName}">
         </label><br>
+        <span th:text="#{registration.role}">Role:</span>
         <div th:each="role : ${roles}">
             <input th:id="${role}" type="radio" name="role" th:value="${role}" th:checked="${role == user.role}">
             <label th:for="${role}" th:text="${role}">Role name</label>
         </div>
+        <span th:text="#{registration.gender}">Gender:</span>
         <div th:each="gender : ${genders}">
             <input th:id="${gender}" type="radio" name="gender" th:value="${gender}" th:checked="${gender == user.gender}">
             <label th:for="${gender}" th:text="${gender}">Gender name</label>
         </div>
-        <label for="birthday">Birthday:
+        <label for="birthday"><span th:text="#{registration.birthday}">Birthday:</span>
         <input id="birthday" type="date" name="birthday" th:value="*{birthday}">
         </label><br>
-        <label for="description">Description:
+        <label for="description"><span th:text="#{registration.description}">Description:</span>
             <input id="description" type="text" name="description" th:value="*{description}">
         </label><br>
-        <div>Registered at:
-            <div th:value="*{registeredAt}">Registered date and time</div>
+        <div><span th:text="#{user.registeredAt}">Registered at:</span>
+            <div th:value="*{registeredAt}"><span th:text="#{user.registeredDateAndTime}">Registered date and time</span></div>
         </div><br>
-        <button type="submit">Update</button>
+        <button type="submit"> <div><span th:text="#{user.update}">Update</span></button>
     </form>
     <form th:action="@{/users/{userId}/delete(userId=${user.id})}" th:if="${user.role.name() == 'ADMIN'}" method="post">
-        <button type="submit">Remove</button>
+        <button type="submit"> <div><span th:text="#{user.remove}">Remove</span></button>
     </form>
 </body>
 </html>

@@ -5,7 +5,9 @@ import com.sergdalm.dto.UserCreateEditDto;
 import com.sergdalm.dto.UserWithInfoDto;
 import com.sergdalm.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,8 +34,7 @@ public class UserRestController {
 
     @GetMapping
     public List<UserWithInfoDto> findAllWithInfoDto(SpecialistFilter filter) {
-        List<UserWithInfoDto> users = userService.findAll(filter);
-        return users;
+        return userService.findAll(filter);
     }
 
     @GetMapping("/{id}")
@@ -53,6 +54,16 @@ public class UserRestController {
                                   @RequestBody UserCreateEditDto user) {
         return userService.update(id, user)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+    }
+
+    @GetMapping(value = "/{id}/avatar")
+    public ResponseEntity<byte[]> findAvatar(@PathVariable("id") Integer id) {
+        return userService.findAvatar(id)
+                .map(content -> ResponseEntity.ok()
+                        .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_OCTET_STREAM_VALUE)
+                        .contentLength(content.length)
+                        .body(content))
+                .orElseGet(notFound()::build);
     }
 
     @DeleteMapping("/{id}")

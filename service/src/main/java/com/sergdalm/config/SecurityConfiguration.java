@@ -3,6 +3,7 @@ package com.sergdalm.config;
 import com.sergdalm.entity.Role;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -19,6 +20,7 @@ public class SecurityConfiguration {
         http
                 .authorizeHttpRequests(urlConfig -> urlConfig
                         .antMatchers("/login", "/users/registration", "v3/api-docs/**", "/swagger-ui/**").permitAll()
+                        .antMatchers(HttpMethod.POST, "/users").permitAll()
                         .antMatchers("/users/{\\d+}/delete").hasAuthority(Role.ADMINISTRATOR.getAuthority())
                         .antMatchers("/specialist/**").hasAuthority(Role.SPECIALIST.getAuthority())
                         .antMatchers("/admin/**").hasAuthority(Role.ADMINISTRATOR.getAuthority())
