@@ -5,11 +5,10 @@ import com.sergdalm.dto.AddressReadDto;
 import com.sergdalm.entity.Address;
 import lombok.AllArgsConstructor;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@SpringBootTest
+//@SpringBootTest
 @AllArgsConstructor
 class AddressReadMapperTest {
 

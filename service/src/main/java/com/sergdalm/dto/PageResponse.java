@@ -7,11 +7,12 @@ import java.util.List;
 
 @Value
 public class PageResponse<T> {
+
     List<T> content;
     Metadata metadata;
 
     public static <T> PageResponse<T> of(Page<T> page) {
-        Metadata metadata = new Metadata(page.getNumber(), page.getSize(), page.getTotalElements());
+        var metadata = new Metadata(page.getNumber(), page.getSize(), page.getTotalElements());
         return new PageResponse<>(page.getContent(), metadata);
     }
 
@@ -19,6 +20,6 @@ public class PageResponse<T> {
     public static class Metadata {
         int page;
         int size;
-        long totalElemetns;
+        long totalElements;
     }
 }

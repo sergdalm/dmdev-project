@@ -2,6 +2,7 @@ package com.sergdalm.integration.dao;
 
 import com.sergdalm.EntityUtil;
 import com.sergdalm.dao.UserInfoRepository;
+import com.sergdalm.entity.Role;
 import com.sergdalm.entity.User;
 import com.sergdalm.entity.UserInfo;
 import com.sergdalm.integration.IntegrationTestBase;
@@ -23,7 +24,14 @@ public class UserInfoRepositoryIT extends IntegrationTestBase {
 
     @Test
     void saveAndFindByIdUser() {
-        User user = EntityUtil.getSpecialistDmitry();
+        User user = User.builder()
+                .email("test@gmail.com")
+                .mobilePhoneNumber("+7911739204")
+                .role(Role.CLIENT)
+                .firstName("Test")
+                .lastName("Test")
+                .password("1234")
+                .build();
         entityManager.persist(user);
         UserInfo userInfo = EntityUtil.getSpecialistDmitryUserInfo();
         userInfo.setUser(user);

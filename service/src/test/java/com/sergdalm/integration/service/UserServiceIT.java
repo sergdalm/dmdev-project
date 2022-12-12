@@ -30,11 +30,11 @@ public class UserServiceIT extends IntegrationTestBase {
             .role(Role.SPECIALIST)
             .email("igor11@gmail.com")
             .mobilePhoneNumber("+7(911)749-94-28")
-            .password("1111")
+            .rowPassword("1111")
             .build();
     private static final UserCreateEditDto NEW_USER_DTO = UserCreateEditDto.builder()
             .email("tamara@gmail.com")
-            .password("nh89hec")
+            .rowPassword("nh89hec")
             .mobilePhoneNumber("+7(911)749-29-81")
             .role(Role.CLIENT)
             .firstName("Tamara")

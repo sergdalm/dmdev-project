@@ -46,7 +46,6 @@ public class UserSearchFilterImpl implements UserSearchFilter {
                 .add(userFilter.getBirthdayBeforeDate(), obj -> cb.lessThan(userInfo.get(UserInfo_.birthday), obj))
                 .add(userFilter.getRegisteredAfterDate(), obj -> cb.greaterThan(userInfo.get(UserInfo_.registeredAt), LocalDateTime.of(obj, LocalTime.MAX)))
                 .add(userFilter.getRegisteredBeforeDate(), obj -> cb.lessThan(userInfo.get(UserInfo_.registeredAt), LocalDateTime.of(obj, LocalTime.MIN)))
-                .add(userFilter.isHasDescription(), obj -> cb.isNotNull(userInfo.get(UserInfo_.description)))
                 .build();
 
         criteria.where(predicates);

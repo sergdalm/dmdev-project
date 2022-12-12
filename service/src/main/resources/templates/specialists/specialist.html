@@ -7,9 +7,12 @@
 </head>
 <body>
     <div th:if="${specialist}">
-        <img th:src="@{/api/v1/users/{userId}/avatar(userId=${user.id})}" alt="User image">
+        <div th:if="${specialist.image}">
+            <img th:src="@{/api/v1/users/{specialistId}/avatar(specialistId=${specialist.id})}" alt="Specialist image">
+        </div>
         <span th:text="${specialist.fullName}">Specialist full name</span>
         <span th:text="${specialist.description}">Specialist description</span>
     </div>
+<!--    <div>Reviews</div>-->
 </body>
 </html>

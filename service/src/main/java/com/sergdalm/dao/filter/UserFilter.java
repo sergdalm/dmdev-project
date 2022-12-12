@@ -18,5 +18,4 @@ public class UserFilter {
     LocalDate birthdayBeforeDate;
     LocalDate registeredAfterDate;
     LocalDate registeredBeforeDate;
-    boolean hasDescription;
 }

@@ -8,8 +8,8 @@
 <div th:insert="~{fragment :: locale}"></div>
 <form th:action="@{/login}" method="post" >
     <div style="color:red" th:if="${param.error}">Bad credentials</div>
-    <label for="email"><span th:text="#{login.email}">Email:</span>
-        <input id="email" type="text" name="email">
+    <label for="username"><span th:text="#{login.email}">Email:</span>
+        <input id="username" type="text" name="username">
     </label><br>
     <label for="password"><span th:text="#{login.password}">Password:</span>
         <input id="password" type="password" name="password">

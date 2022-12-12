@@ -12,11 +12,11 @@ import java.util.List;
 @Value
 @Builder
 public class SpecialistFilter {
-    String email;
-    String mobilePhoneNumber;
     String firstName;
     String lastName;
     Gender gender;
+    String email;
+    String mobilePhoneNumber;
     Integer minAge;
     Integer maxAge;
     LocalDate registeredBeforeDate;

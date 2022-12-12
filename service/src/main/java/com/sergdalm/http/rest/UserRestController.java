@@ -1,6 +1,5 @@
 package com.sergdalm.http.rest;
 
-import com.sergdalm.dao.filter.SpecialistFilter;
 import com.sergdalm.dto.UserCreateEditDto;
 import com.sergdalm.dto.UserWithInfoDto;
 import com.sergdalm.service.UserService;
@@ -20,8 +19,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.List;
-
 import static org.springframework.http.ResponseEntity.noContent;
 import static org.springframework.http.ResponseEntity.notFound;
 
@@ -31,11 +28,6 @@ import static org.springframework.http.ResponseEntity.notFound;
 public class UserRestController {
 
     private final UserService userService;
-
-    @GetMapping
-    public List<UserWithInfoDto> findAllWithInfoDto(SpecialistFilter filter) {
-        return userService.findAll(filter);
-    }
 
     @GetMapping("/{id}")
     public UserWithInfoDto findById(@PathVariable("id") Integer id) {

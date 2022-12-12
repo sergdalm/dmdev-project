@@ -14,6 +14,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -30,10 +32,11 @@ class UserRepositoryIT extends IntegrationTestBase {
 
     @ParameterizedTest(name = "{index} {0}")
     @MethodSource("getSpecialistFilterWithExpectedUsrList")
+
     void findSpecialistsByFilter(String testDisplayName,
                                  SpecialistFilter filter,
                                  List<String> expectedList) {
-        List<User> actualResult = userRepository.findAll(filter);
+        Page<User> actualResult = userRepository.findAll(filter, PageRequest.of(0, 6));
         assertThat(actualResult).hasSize(expectedList.size());
         List<String> actualEmailList = actualResult.stream()
                 .map(User::getEmail)
@@ -200,7 +203,6 @@ class UserRepositoryIT extends IntegrationTestBase {
                         List.of("katya@gmail.com")),
                 Arguments.of("have description",
                         UserFilter.builder()
-                                .hasDescription(true)
                                 .build(),
                         List.of("dmitry@gmail.com", "natali@gmail.com")),
                 Arguments.of("registered after date",

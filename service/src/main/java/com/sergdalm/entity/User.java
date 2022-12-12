@@ -57,7 +57,7 @@ public class User {
     @Column(nullable = false)
     private String lastName;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "user", cascade = CascadeType.DETACH)
     private UserInfo userInfo;
 
     @Builder.Default

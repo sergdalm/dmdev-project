@@ -21,28 +21,27 @@ public class UserCreateEditDto {
     @Email
     String email;
 
-    String mobilePhoneNumber;
-
-    Role role;
-
-    @NotEmpty
-    @NotBlank
+    @NotEmpty(message = "Password can't be empty")
+    @NotBlank(message = "Password can't be blank")
     String rowPassword;
 
-    @NotEmpty
-    @NotBlank
+    @NotEmpty(message = "First name can't be empty")
+    @NotBlank(message = "First name can't be blank")
     String firstName;
 
-    @NotEmpty
-    @NotBlank
+    @NotEmpty(message = "Last name can't be empty")
+    @NotBlank(message = "Last name can't be blank")
     String lastName;
 
     Gender gender;
 
+    MultipartFile image;
+
+    String mobilePhoneNumber;
+
+    Role role;
     @Past
     LocalDate birthday;
 
     String description;
-
-    MultipartFile image;
 }

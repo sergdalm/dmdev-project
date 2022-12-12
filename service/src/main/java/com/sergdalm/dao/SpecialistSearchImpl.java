@@ -19,8 +19,12 @@ import com.sergdalm.entity.UserInfo;
 import com.sergdalm.entity.UserInfo_;
 import com.sergdalm.entity.User_;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 
 import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
@@ -31,7 +35,6 @@ import javax.persistence.criteria.Subquery;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.List;
 
 import static com.sergdalm.entity.User_.email;
 import static com.sergdalm.entity.User_.firstName;
@@ -45,7 +48,7 @@ public class SpecialistSearchImpl implements SpecialistSearch {
 
     private final EntityManager entityManager;
 
-    public List<User> findAll(SpecialistFilter specialistFilter) {
+    public Page<User> findAll(SpecialistFilter specialistFilter, Pageable page) {
 
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<User> criteria = cb.createQuery(User.class);
@@ -127,7 +130,12 @@ public class SpecialistSearchImpl implements SpecialistSearch {
         criteria.where(predicates)
                 .groupBy(user.get(id))
                 .getRestriction();
-        return entityManager.createQuery(criteria)
-                .getResultList();
+
+        TypedQuery<User> query = entityManager.createQuery(criteria);
+        int totalRows = query.getResultList().size();
+        query.setFirstResult((page.getPageNumber()) * page.getPageSize());
+        query.setMaxResults(page.getPageSize());
+
+        return new PageImpl<User>(query.getResultList(), page, totalRows);
     }
 }

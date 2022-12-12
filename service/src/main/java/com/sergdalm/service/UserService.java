@@ -4,18 +4,22 @@ import com.sergdalm.dao.UserInfoRepository;
 import com.sergdalm.dao.UserRepository;
 import com.sergdalm.dao.filter.SpecialistFilter;
 import com.sergdalm.dao.filter.UserFilter;
+import com.sergdalm.dto.SpecialistDto;
 import com.sergdalm.dto.UserCreateEditDto;
 import com.sergdalm.dto.UserDto;
 import com.sergdalm.dto.UserReadDto;
 import com.sergdalm.dto.UserWithInfoDto;
 import com.sergdalm.entity.User;
 import com.sergdalm.entity.UserInfo;
+import com.sergdalm.mapper.SpecialistReadMapper;
 import com.sergdalm.mapper.UserCreateEditMapper;
 import com.sergdalm.mapper.UserCreateEditToUserInfoMapper;
 import com.sergdalm.mapper.UserReadMapper;
 import com.sergdalm.mapper.UserWithInfoMapper;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -23,6 +27,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.persistence.EntityManager;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -39,6 +44,8 @@ public class UserService implements CrudServiceWithDoubleReadDto<Integer, UserCr
     private final UserCreateEditMapper userCreateEditMapper;
     private final UserWithInfoMapper userWithInfoMapper;
     private final UserCreateEditToUserInfoMapper userCreateEditToUserInfoMapper;
+    private final EntityManager entityManager;
+    private final SpecialistReadMapper specialistReadMapper;
 
     @Override
     public List<UserReadDto> findAll() {
@@ -53,16 +60,20 @@ public class UserService implements CrudServiceWithDoubleReadDto<Integer, UserCr
                 .toList();
     }
 
-    public List<UserWithInfoDto> findAll(SpecialistFilter filter) {
-        return userRepository.findAll(filter).stream()
-                .map(userWithInfoMapper::mapToDto)
-                .toList();
+    public Page<SpecialistDto> findAll(SpecialistFilter filter, Pageable pageable) {
+        return userRepository.findAll(filter, pageable)
+                .map(specialistReadMapper::mapToDto);
     }
 
     @Override
     public Optional<UserWithInfoDto> findById(Integer id) {
         return userRepository.findById(id)
                 .map(userWithInfoMapper::mapToDto);
+    }
+
+    public Optional<SpecialistDto> findSpecialistById(Integer id) {
+        return userRepository.findById(id)
+                .map(specialistReadMapper::mapToDto);
     }
 
     @Transactional
@@ -74,8 +85,11 @@ public class UserService implements CrudServiceWithDoubleReadDto<Integer, UserCr
                     UserInfo userInfo = userCreateEditToUserInfoMapper.mapToEntity(newUserDto);
                     uploadImage(userDto.getImage());
                     userRepository.save(user);
+                    userRepository.flush();
                     userInfo.setUser(user);
+                    // При попытке сохранить через userInfoRepository падает исключение
                     userInfoRepository.save(userInfo);
+//                    entityManager.persist(userInfo);
                     return userWithInfoMapper.mapToDto(user);
                 })
                 .orElseThrow();

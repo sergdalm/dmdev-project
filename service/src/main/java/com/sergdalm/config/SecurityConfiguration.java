@@ -19,10 +19,10 @@ public class SecurityConfiguration {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(urlConfig -> urlConfig
-                        .antMatchers("/login", "/users/registration", "v3/api-docs/**", "/swagger-ui/**").permitAll()
                         .antMatchers(HttpMethod.POST, "/users").permitAll()
+                        .antMatchers("/login", "/users/registration", "v3/api-docs/**", "/swagger-ui/**", "/specialists").permitAll()
+                        .antMatchers(HttpMethod.POST, "/specialists").permitAll()
                         .antMatchers("/users/{\\d+}/delete").hasAuthority(Role.ADMINISTRATOR.getAuthority())
-                        .antMatchers("/specialist/**").hasAuthority(Role.SPECIALIST.getAuthority())
                         .antMatchers("/admin/**").hasAuthority(Role.ADMINISTRATOR.getAuthority())
                         .anyRequest().authenticated()
                 )
@@ -31,7 +31,7 @@ public class SecurityConfiguration {
                         .logoutSuccessUrl("/login"))
                 .formLogin(login -> login
                         .loginPage("/login")
-                        .defaultSuccessUrl("/users"));
+                        .defaultSuccessUrl("/specialists"));
         return http.build();
     }
 

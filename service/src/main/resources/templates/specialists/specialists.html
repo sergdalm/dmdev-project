@@ -1,26 +1,79 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <title><span th:text="#{specialists.specialists}">Specialists</span></title>
 </head>
 <body>
-    <div th:insert="~{fragment :: header}"></div>
+<div th:insert="~{fragment :: header}"></div>
 
-    <div th:switch="${#authentication.principal.role}">
-        <div th:case="'ADMIN'">
-            <div th:insert="~{search :: admin}"></div>
+<div sec:authorize="!isAuthenticated()">
+    <form th:action="@{/specialists}">
+        <label for="firstName"><span th:text="#{registration.firstName}">First name</span>
+            <input id="firstName" type="text" name="firstName" th:value="${filter.getFirstName()}">
+        </label><br>
+        <label for="lastName"><span th:text="#{registration.lastName}">Last name</span>
+            <input id="lastName" type="text" name="lastName" th:value="${filter.getLastName()}">
+        </label>
+        <span th:text="#{registration.gender}">Gender</span>
+        <!--            <div th:each="gender : ${genders}">-->
+        <!--                <input th:id="${gender}" type="radio" name="gender" th:value="${filter.getGender()}">-->
+        <!--                <label th:for="${gender}" th:text="${gender}"><span th:text="#{registration.genderName}">Gender name</span></label>-->
+        <!--            </div>-->
+        <div th:each="gender : ${genders}">
+            <input th:id="${gender}" type="radio" name="gender" th:value="${gender}" th:checked="${gender == filter.getGender()}">
+            <label th:for="${gender}" th:text="${gender}">Gender name</label>
         </div>
-        <div th:case="'CLIENT'">
-            <div th:insert="~{search :: client}"></div>
-        </div>
+        <label for="registeredAfterDate">After date:
+            <input id="registeredAfterDate" type="date" name="registeredAfterDate"
+                   th:value="${filter.getRegisteredAfterDate()}">
+        </label>
+        <label for="registeredBeforeDate">Before date:
+            <input id="registeredBeforeDate" type="date" name="registeredBeforeDate"
+                   th:value="${filter.getRegisteredBeforeDate()}">
+        </label><br>
+        <div>
+            <input type="checkbox" id="hasReviews" name="hasReviews" th:checked="${filter.getHasReviews()}">
+            <label for="hasReviews"><span th:text="#{specialists.search.hasReview}">Has reviews</span></label>
+        </div><br>
+        <span th:text="#{specialists.search.services}">Services</span>
+        <select id="serviceNames" th:field="*{serviceNames}" multiple="multiple">
+            <option th:each="serviceName : ${serviceNames}"
+                    th:value="${{filter.getServiceNames()}}"
+                    th:text="${serviceName}">
+                <span th:text="#{specialists.search.serviceName}">Service Name</span>
+            </option>
+        </select><br>
+        <span th:text="#{specialists.search.addressWithAppointments}">Addresses where specialist has appointments:</span>
+        <select id="addressIdWhereHaveAppointments" th:field="*{addresses}" multiple="multiple">
+            <option th:each="address : ${addresses}"
+                    th:value="${{filter.getAddressIdWhereHaveAppointments()}}"
+                    th:text="${address}">
+                <span th:text="#{specialists.search.addressName}">Address Name</span>
+            </option>
+        </select><br>
+        <button type="submit">Search</button>
+        <br>
+        <span th:each="i: ${#numbers.sequence(1, specialists.metadata.getTotalElements() / specialists.metadata.getSize())}">
+             <button type="submit" th:href="@{/specialists(page=${i - 1}, size = 3)}">[[${i}]]</button>
+        </span>
+    </form>
+</div>
+<div sec:authorize="isAuthenticated()">
+    <div>
+        <div th:insert="~{search :: client}"></div>
     </div>
+    <div th:if="${#authentication.principal.role} =='ADMIN'">
+        <div th:insert="~{search :: admin}"></div>
+    </div>
+</div>
 
-    <div th:each="specialist : ${specialists}">
-        <div th:if="${specialist.image}">
-            <img th:src="@{/api/v1/users/{userId}/avatar(userId=${specialist.id})}" alt="User image">
-        </div>
-        <a th:href="@{'/users/' + ${specialist.id}}" th:text="${specialist.fullName}">Specialist</a>
+<div th:each="specialist : ${specialists.content}">
+    <div th:if="${specialist.image}">
+        <img th:src="@{/api/v1/users/{specialistId}/avatar(specialistId=${specialist.id})}" alt="Specialist image">
     </div>
+    <a th:href="@{'/specialists/' + ${specialist.id}}" th:text="${specialist.fullName}">Specialist</a>
+</div>
+
 </body>
 </html>
